@@ -1,10 +1,10 @@
 package com.jeremyhaberman.restfulandroid.test;
 
+import mn.aug.restfulandroid.rest.GetProfileRestMethod;
+import mn.aug.restfulandroid.rest.RestMethodResult;
+import mn.aug.restfulandroid.rest.resource.Profile;
 import android.test.AndroidTestCase;
 
-import com.jeremyhaberman.restfulandroid.rest.GetProfileRestMethod;
-import com.jeremyhaberman.restfulandroid.rest.RestMethodResult;
-import com.jeremyhaberman.restfulandroid.rest.resource.Profile;
 
 public class GetProfileRestMethodTest extends AndroidTestCase {
 

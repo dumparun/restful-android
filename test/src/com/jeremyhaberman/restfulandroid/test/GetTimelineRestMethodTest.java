@@ -1,8 +1,8 @@
 package com.jeremyhaberman.restfulandroid.test;
 
-import com.jeremyhaberman.restfulandroid.rest.GetTimelineRestMethod;
-import com.jeremyhaberman.restfulandroid.rest.RestMethodResult;
-import com.jeremyhaberman.restfulandroid.rest.resource.TwitterTimeline;
+import mn.aug.restfulandroid.rest.GetTimelineRestMethod;
+import mn.aug.restfulandroid.rest.RestMethodResult;
+import mn.aug.restfulandroid.rest.resource.TwitterTimeline;
 
 import android.test.AndroidTestCase;
 

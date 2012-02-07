@@ -1,25 +1,19 @@
 package com.jeremyhaberman.restfulandroid.test;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.List;
 
-import junit.framework.Assert;
+import mn.aug.restfulandroid.R;
+import mn.aug.restfulandroid.rest.resource.Tweet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-
 
 import android.test.InstrumentationTestCase;
 
-import com.jeremyhaberman.restfulandroid.rest.resource.Tweet;
-import com.jeremyhaberman.restfulandroid.rest.resource.TwitterTimeline;
 
 
 public class TweetTest extends InstrumentationTestCase{
