@@ -16,12 +16,12 @@ import org.scribe.oauth.OAuthService;
 import org.scribe.utils.MapUtils;
 import org.scribe.utils.URLUtils;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
-import mn.aug.rest.Request;
 
 /**
  * OAuthManager handles OAuth authentication with the Twitter API.
