@@ -1,4 +1,4 @@
-package com.jeremyhaberman.restfulandroid.test;
+package mn.aug.restfulandroid.test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

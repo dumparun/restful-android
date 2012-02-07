@@ -1,15 +1,15 @@
-package com.jeremyhaberman.restfulandroid.security.test;
+package mn.aug.restfulandroid.security.test;
 
 import java.net.URI;
 
 import android.test.AndroidTestCase;
 
-import com.jeremyhaberman.restfulandroid.rest.Request;
-import com.jeremyhaberman.restfulandroid.rest.Response;
-import com.jeremyhaberman.restfulandroid.rest.RestClient;
-import com.jeremyhaberman.restfulandroid.rest.RestMethodFactory.Method;
-import com.jeremyhaberman.restfulandroid.security.AuthorizationManager;
-import com.jeremyhaberman.restfulandroid.security.RequestSigner;
+import mn.aug.restfulandroid.rest.Request;
+import mn.aug.restfulandroid.rest.Response;
+import mn.aug.restfulandroid.rest.RestClient;
+import mn.aug.restfulandroid.rest.RestMethodFactory.Method;
+import mn.aug.restfulandroid.security.AuthorizationManager;
+import mn.aug.restfulandroid.security.RequestSigner;
 
 public class AuthorizationManagerTest extends AndroidTestCase {
 
