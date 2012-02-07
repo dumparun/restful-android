@@ -7,27 +7,28 @@ import mn.aug.restfulandroid.provider.ProfileConstants;
 
 import android.content.UriMatcher;
 import android.net.Uri;
-
+import android.content.Context;
 
 public class RestMethodFactory {
 
 	private static RestMethodFactory instance;
 	private static Object lock = new Object();
 	private UriMatcher uriMatcher;
+	private Context mContext;
 
 	private static final int PROFILE = 1;
 	private static final int TIMELINE = 2;
 
-	private RestMethodFactory() {
-
+	private RestMethodFactory(Context context) {
+		mContext = context.getApplicationContext();
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(ProfileConstants.AUTHORITY, ProfileConstants.TABLE_NAME, PROFILE);
 	}
 
-	public static RestMethodFactory getInstance() {
+	public static RestMethodFactory getInstance(Context context) {
 		synchronized (lock) {
 			if (instance == null) {
-				instance = new RestMethodFactory();
+				instance = new RestMethodFactory(context);
 			}
 		}
 
@@ -40,12 +41,12 @@ public class RestMethodFactory {
 		switch (uriMatcher.match(resourceUri)) {
 		case PROFILE:
 			if (method == Method.GET) {
-				return new GetProfileRestMethod();
+				return new GetProfileRestMethod(mContext);
 			}
 			break;
 		case TIMELINE:
 			if (method == Method.GET) {
-				return new GetTimelineRestMethod(headers);
+				return new GetTimelineRestMethod(mContext, headers);
 			}
 			break;
 		}

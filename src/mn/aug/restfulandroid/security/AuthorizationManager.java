@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
+import mn.aug.rest.Request;
 
 /**
  * OAuthManager handles OAuth authentication with the Twitter API.
@@ -61,9 +62,9 @@ public class AuthorizationManager implements RequestSigner {
 	 * 
 	 * @return singleton instance of the OAuthManager
 	 */
-	public static AuthorizationManager getInstance() {
+	public static AuthorizationManager getInstance(Context context) {
 		if (mInstance == null) {
-			mInstance = new AuthorizationManager();
+			mInstance = new AuthorizationManager(context);
 		}
 		return mInstance;
 	}
@@ -72,9 +73,9 @@ public class AuthorizationManager implements RequestSigner {
 	 * Private constructor for the OAuthManager. Initializes the persistent
 	 * storate and OAuthService
 	 */
-	private AuthorizationManager() {
+	private AuthorizationManager(Context context) {
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(RestfulAndroid.getAppContext());
+		prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
 
 		mOAuthService = new ServiceBuilder().provider(TwitterApi.class).apiKey(TWITTER_API_KEY)
 				.apiSecret(TWITTER_API_SECRET).callback(TWITTER_CALLBACK_URL).build();

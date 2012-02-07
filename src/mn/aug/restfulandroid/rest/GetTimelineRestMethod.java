@@ -11,14 +11,18 @@ import mn.aug.restfulandroid.security.AuthorizationManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.Context;
 
 public class GetTimelineRestMethod extends AbstractRestMethod<TwitterTimeline>{
+	
+	private Context mContext;
 	
 	private static final URI TIMELINE_URI = URI.create("https://api.twitter.com/1/statuses/home_timeline.json");
 	
 	private Map<String, List<String>> headers;
 	
-	public GetTimelineRestMethod(Map<String, List<String>> headers){
+	public GetTimelineRestMethod(Context context, Map<String, List<String>> headers){
+		mContext = context.getApplicationContext();
 		this.headers = headers;
 	}
 
@@ -35,6 +39,11 @@ public class GetTimelineRestMethod extends AbstractRestMethod<TwitterTimeline>{
 		JSONArray json = new JSONArray(responseBody);
 		return new TwitterTimeline(json);
 		
+	}
+
+	@Override
+	protected Context getContext() {
+		return mContext;
 	}
 
 }

@@ -1,14 +1,12 @@
 package mn.aug.restfulandroid.rest.resource;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import mn.aug.restfulandroid.provider.ProfileConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.net.Uri;
 

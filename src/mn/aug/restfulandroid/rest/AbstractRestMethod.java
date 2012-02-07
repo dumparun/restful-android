@@ -3,6 +3,8 @@ package mn.aug.restfulandroid.rest;
 import java.util.List;
 import java.util.Map;
 
+import android.content.COntext;
+
 import mn.aug.restfulandroid.rest.resource.Resource;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.security.RequestSigner;
@@ -16,12 +18,14 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 
 		Request request = buildRequest();
 		if (requiresAuthorization()) {
-			RequestSigner signer = AuthorizationManager.getInstance();
+			RequestSigner signer = AuthorizationManager.getInstance(getContext());
 			signer.authorize(request);
 		}
 		Response response = doRequest(request);
 		return buildResult(response);
 	}
+	
+	protected abstract Context getContext();
 
 	/**
 	 * Subclasses can overwrite for full control, eg. need to do special

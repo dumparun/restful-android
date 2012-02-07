@@ -1,9 +1,8 @@
 package mn.aug.restfulandroid.service;
 
-import java.util.Iterator;
 import java.util.List;
 
-import mn.aug.restfulandroid.provider.ProfileConstants;
+import android.content.Context;
 import mn.aug.restfulandroid.rest.RestMethod;
 import mn.aug.restfulandroid.rest.RestMethodFactory;
 import mn.aug.restfulandroid.rest.RestMethodResult;
@@ -14,7 +13,6 @@ import mn.aug.restfulandroid.rest.resource.TwitterTimeline;
 
 
 import android.content.Context;
-
 
 /**
  * The TimelineProcessor is a POJO for processing timeline requests.
@@ -59,7 +57,7 @@ public class TimelineProcessor {
 				// and performs the HTTP operation.
 
 				@SuppressWarnings("unchecked")
-				RestMethod<TwitterTimeline> getTimelineMethod = RestMethodFactory.getInstance().getRestMethod(
+				RestMethod<TwitterTimeline> getTimelineMethod = RestMethodFactory.getInstance(mContext).getRestMethod(
 						TwitterTimeline.CONTENT_URI, Method.GET, null, null);
 				RestMethodResult<TwitterTimeline> result = getTimelineMethod.execute();
 
