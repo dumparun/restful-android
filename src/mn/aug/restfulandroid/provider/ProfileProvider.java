@@ -33,7 +33,7 @@ public class ProfileProvider extends ContentProvider {
 	 */
 	private static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.example.profile";
 
-	private ProfileData profiles;
+	private ProviderDbHelper dbHelper;
 	private UriMatcher uriMatcher;
 
 	@Override
@@ -41,7 +41,7 @@ public class ProfileProvider extends ContentProvider {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(AUTHORITY, "profiles", PROFILES);
 		uriMatcher.addURI(AUTHORITY, "profiles/#", PROFILE_ID);
-		profiles = new ProfileData(getContext());
+		this.dbHelper = new ProviderDbHelper(this.getContext());
 		return true;
 	}
 
@@ -54,7 +54,7 @@ public class ProfileProvider extends ContentProvider {
 		}
 
 		// Get the database and run the query
-		SQLiteDatabase db = profiles.getReadableDatabase();
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_NAME, projection, selection,
 				selectionArgs, null, null, orderBy);
 
@@ -78,7 +78,7 @@ public class ProfileProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		SQLiteDatabase db = profiles.getWritableDatabase();
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		// Validate the requested uri
 		if (uriMatcher.match(uri) != PROFILES) {
@@ -107,7 +107,7 @@ public class ProfileProvider extends ContentProvider {
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 
-		SQLiteDatabase db = profiles.getWritableDatabase();
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		// Validate the requested uri
 		if (uriMatcher.match(uri) != PROFILE_ID) {

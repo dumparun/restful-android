@@ -8,7 +8,7 @@ public class ProfileConstants {
 	
 	public static final String TIMELINE_TABLE_NAME = "timeline";
 	
-	public static final String AUTHORITY = "com.jeremyhaberman.restfulandroid.profiles";
+	public static final String AUTHORITY = "mn.aug.restfulandroid.profiles";
 	
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME);
 

@@ -30,7 +30,7 @@ public class TwitterServiceHelper {
 	private static TwitterServiceHelper instance;
 
 	//TODO: refactor the key
-	private Map<String,Long> requests = new HashMap<String,Long>();
+	private Map<String,Long> pendingRequests = new HashMap<String,Long>();
 	private Context ctx;
 
 	private TwitterServiceHelper(Context ctx){
@@ -50,7 +50,7 @@ public class TwitterServiceHelper {
 	public long getTimeline() {
 
 		long requestId = generateRequestID();
-		requests.put(timelineHashkey, requestId);
+		pendingRequests.put(timelineHashkey, requestId);
 
 		ResultReceiver serviceCallback = new ResultReceiver(null){
 			@Override
@@ -72,12 +72,12 @@ public class TwitterServiceHelper {
 	
 	public long getProfile(){
 
-		if(requests.containsKey(profileHashkey)){
-			return requests.get(profileHashkey);
+		if(pendingRequests.containsKey(profileHashkey)){
+			return pendingRequests.get(profileHashkey);
 		}
 
 		long requestId = generateRequestID();
-		requests.put(profileHashkey, requestId);
+		pendingRequests.put(profileHashkey, requestId);
 
 		ResultReceiver serviceCallback = new ResultReceiver(null){
 
@@ -105,7 +105,7 @@ public class TwitterServiceHelper {
 	}
 
 	public boolean isRequestPending(long requestId){
-		return this.requests.containsValue(requestId);
+		return this.pendingRequests.containsValue(requestId);
 	}
 
 	private void handleGetProfileResponse(int resultCode, Bundle resultData){
@@ -116,7 +116,7 @@ public class TwitterServiceHelper {
 		if(origIntent != null){
 			long requestId = origIntent.getLongExtra(REQUEST_ID, 0);
 
-			requests.remove(profileHashkey);
+			pendingRequests.remove(profileHashkey);
 
 			Intent resultBroadcast = new Intent(ACTION_REQUEST_RESULT);
 			resultBroadcast.putExtra(EXTRA_REQUEST_ID, requestId);
@@ -134,7 +134,7 @@ public class TwitterServiceHelper {
 		if(origIntent != null){
 			long requestId = origIntent.getLongExtra(REQUEST_ID, 0);
 
-			requests.remove(timelineHashkey);
+			pendingRequests.remove(timelineHashkey);
 
 			Intent resultBroadcast = new Intent(ACTION_REQUEST_RESULT);
 			resultBroadcast.putExtra(EXTRA_REQUEST_ID, requestId);
