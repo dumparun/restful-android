@@ -3,11 +3,11 @@ package mn.aug.restfulandroid.rest;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
-
+import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.rest.resource.Resource;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.security.RequestSigner;
+import android.content.Context;
 
 
 public abstract class AbstractRestMethod<T extends Resource> implements RestMethod<T> {
@@ -62,7 +62,7 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 
 	private Response doRequest(Request request) {
 
-		RestClient client = new RestClient();
+		RestClient client = RestfulAndroid.getRestClient();
 		return client.execute(request);
 	}
 

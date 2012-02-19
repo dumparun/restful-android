@@ -20,7 +20,7 @@ public class Response {
      */
     public byte[] body;
     
-    protected Response(int status,  Map<String, List<String>> headers, byte[] body) {
+    public Response(int status,  Map<String, List<String>> headers, byte[] body) {
         this.status = status; 
         this.headers = headers; 
         this.body = body;

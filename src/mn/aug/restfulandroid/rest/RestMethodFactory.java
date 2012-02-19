@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import mn.aug.restfulandroid.provider.ProfileConstants;
-
+import android.content.Context;
 import android.content.UriMatcher;
 import android.net.Uri;
-import android.content.Context;
 
 public class RestMethodFactory {
 
@@ -46,7 +45,7 @@ public class RestMethodFactory {
 			break;
 		case TIMELINE:
 			if (method == Method.GET) {
-				return new GetTimelineRestMethod(mContext, headers);
+				return new GetCatPicturesRestMethod(mContext, headers);
 			}
 			break;
 		}
