@@ -71,7 +71,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 		String actualMethod = intent.getStringExtra(CatPicturesService.METHOD_EXTRA);
 		int actualResourceType = intent.getIntExtra(CatPicturesService.RESOURCE_TYPE_EXTRA, 0);
 		ResultReceiver receiver = (ResultReceiver) intent
-				.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK);
+				.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA);
 		long resultRequestId = intent.getLongExtra(CatPicturesServiceHelper.EXTRA_REQUEST_ID, 0);
 		assertTrue(actualMethod.equalsIgnoreCase(Method.GET.toString()));
 		assertTrue(actualResourceType == CatPicturesService.RESOURCE_TYPE_CAT_PICTURES);
@@ -115,7 +115,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 		String actualMethod = intent.getStringExtra(CatPicturesService.METHOD_EXTRA);
 		int actualResourceType = intent.getIntExtra(CatPicturesService.RESOURCE_TYPE_EXTRA, 0);
 		ResultReceiver receiver = (ResultReceiver) intent
-				.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK);
+				.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA);
 		long resultRequestId = intent.getLongExtra(CatPicturesServiceHelper.EXTRA_REQUEST_ID, 0);
 
 		assertTrue(actualMethod.equalsIgnoreCase(Method.GET.toString()));

@@ -1,9 +1,14 @@
 package mn.aug.restfulandroid;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import mn.aug.restfulandroid.rest.RestClient;
 import mn.aug.restfulandroid.rest.RestClientImpl;
+import mn.aug.restfulandroid.service.CatPicturesProcessor;
 import mn.aug.restfulandroid.service.CatPicturesService;
-import mn.aug.restfulandroid.service.CatPicturesServiceImpl;
+import mn.aug.restfulandroid.service.DefaultCatPicturesProcessor;
+import mn.aug.restfulandroid.service.DefaultCatPicturesService;
 import mn.aug.restfulandroid.util.Logger;
 import android.app.Application;
 import android.content.Context;
@@ -12,7 +17,8 @@ public class RestfulAndroid extends Application {
 
 	private static Context mAppContext;
 	private static RestClient mRestClient;
-	private static Class<? extends CatPicturesService> mCatPicturesServiceClass = CatPicturesServiceImpl.class;
+	private static Class<? extends CatPicturesService> mCatPicturesServiceClass = DefaultCatPicturesService.class;
+	private static Class<? extends CatPicturesProcessor> mCatPicturesProcessorClass = DefaultCatPicturesProcessor.class;
 
 	@Override
 	public void onCreate() {
@@ -60,15 +66,40 @@ public class RestfulAndroid extends Application {
 	 */
 	public static void reset() {
 		mRestClient = new RestClientImpl();
-		mCatPicturesServiceClass = CatPicturesServiceImpl.class;
+		mCatPicturesServiceClass = DefaultCatPicturesService.class;
 	}
 
 	public static void setCatPicturesServiceClass(Class<? extends CatPicturesService> c) {
 		mCatPicturesServiceClass = c;
 	}
-	
+
 	public static Class<? extends CatPicturesService> getCatPicturesServiceClass() {
 		return mCatPicturesServiceClass;
+	}
+
+	public static CatPicturesProcessor getCatPicturesProcessor(Context context) {
+		try {
+			Constructor<? extends CatPicturesProcessor> constructor = mCatPicturesProcessorClass
+					.getConstructor(android.content.Context.class);
+			return constructor.newInstance(context);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void setCatPicturesProcessorClass(Class<? extends CatPicturesProcessor> c) {
+		mCatPicturesProcessorClass = c;
 	}
 
 }

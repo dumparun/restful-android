@@ -90,7 +90,7 @@ public class CatPicturesServiceHelper {
 		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_GET);
 		intent.putExtra(CatPicturesService.RESOURCE_TYPE_EXTRA,
 				CatPicturesService.RESOURCE_TYPE_CAT_PICTURES);
-		intent.putExtra(CatPicturesService.SERVICE_CALLBACK, serviceCallback);
+		intent.putExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA, serviceCallback);
 		intent.putExtra(EXTRA_REQUEST_ID, requestId);
 
 		this.mAppContext.startService(intent);

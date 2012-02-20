@@ -41,7 +41,7 @@ public class MockCatPicturesService extends IntentService implements CatPictures
 		// Get request data from Intent
 		String method = requestIntent.getStringExtra(CatPicturesService.METHOD_EXTRA);
 		int resourceType = requestIntent.getIntExtra(CatPicturesService.RESOURCE_TYPE_EXTRA, -1);
-		mCallback = requestIntent.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK);
+		mCallback = requestIntent.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA);
 
 		switch (resourceType) {
 		case RESOURCE_TYPE_CAT_PICTURES:

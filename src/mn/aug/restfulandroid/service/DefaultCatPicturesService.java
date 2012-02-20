@@ -1,11 +1,12 @@
 package mn.aug.restfulandroid.service;
 
+import mn.aug.restfulandroid.RestfulAndroid;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-public class CatPicturesServiceImpl extends IntentService implements CatPicturesService {
+public class DefaultCatPicturesService extends IntentService implements CatPicturesService {
 
 	private static final int REQUEST_INVALID = -1;
 
@@ -13,8 +14,8 @@ public class CatPicturesServiceImpl extends IntentService implements CatPictures
 
 	private Intent mOriginalRequestIntent;
 
-	public CatPicturesServiceImpl() {
-		super("CatPicturesService");
+	public DefaultCatPicturesService() {
+		super("DefaultCatPicturesService");
 	}
 
 	@Override
@@ -25,13 +26,13 @@ public class CatPicturesServiceImpl extends IntentService implements CatPictures
 		// Get request data from Intent
 		String method = requestIntent.getStringExtra(CatPicturesService.METHOD_EXTRA);
 		int resourceType = requestIntent.getIntExtra(CatPicturesService.RESOURCE_TYPE_EXTRA, -1);
-		mCallback = requestIntent.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK);
+		mCallback = requestIntent.getParcelableExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA);
 
 		switch (resourceType) {
 		case RESOURCE_TYPE_CAT_PICTURES:
 
 			if (method.equalsIgnoreCase(METHOD_GET)) {
-				CatPicturesProcessor processor = new CatPicturesProcessor(getApplicationContext());
+				CatPicturesProcessor processor = RestfulAndroid.getCatPicturesProcessor(getApplicationContext());
 				processor.getCatPictures(makeCatPicturesProcessorCallback());
 			} else {
 				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
