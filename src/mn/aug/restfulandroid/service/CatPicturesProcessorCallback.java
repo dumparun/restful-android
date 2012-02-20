@@ -1,6 +1,6 @@
 package mn.aug.restfulandroid.service;
 
-public interface TimelineProcessorCallback {
+public interface CatPicturesProcessorCallback {
 	
 	void send(int resultCode);
 

@@ -16,53 +16,63 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
-public class TimelineProvider extends ContentProvider {
+public class CatPicturesProvider extends ContentProvider {
 
-	public static final String TAG = "TimelineProvider";
+	public static final String TAG = CatPicturesProvider.class.getSimpleName();
 
-	// "projection" map of all the timeline table columns
-	private static HashMap<String, String> TimelineProjectionMap;
-	// URI matcher ID for the main timeline URI pattern
-	private static final int MATCHER_TIMELINE = 1;
-	// URI matcher ID for the single tweet ID pattern
-	private static final int MATCHER_TWEET = 2;
+	// "projection" map of all the cat pictures table columns
+	private static HashMap<String, String> timelineProjectionMap;
+
 	// URI matcher for validating URIs
 	private static final UriMatcher uriMatcher;
+
+	// URI matcher ID for the cat pictures pattern
+	private static final int MATCHER_CAT_PICTURES = 1;
+
+	// URI matcher ID for the single cat picture ID pattern
+	private static final int MATCHER_CAT_PICTURE_ID = 2;
+
 	// Handle to our ProviderDbHelper.
 	private ProviderDbHelper dbHelper;
-	
-	/**
-	 * The MIME type of a timeline
-	 */
-	private static final String TIMELINE_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.restfulandroid.timeline";
 
 	/**
-	 * The MIME type of a single tweet from the timeline
+	 * The MIME type of a directory of cat pictures
 	 */
-	private static final String TIMELINE_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.restfulandroid.timeline";
-	
+	private static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.restfulandroid.catpicture";
+
+	/**
+	 * The MIME type of a single cat picture
+	 */
+	private static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.restfulandroid.catpicture";
+
 	// static 'setup' block
 	static {
 		// Build up URI matcher
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		// Add a pattern to route URIs terminated with just "rageComics"
-		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY, CatPicturesTable.TABLE_NAME, MATCHER_TIMELINE);
-		// Add a pattern to route URIs terminated with comic IDs
-		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY, CatPicturesTable.TABLE_NAME + "/#", MATCHER_TWEET);
+
+		// Add a pattern to route URIs terminated with just "catpicture"
+		uriMatcher.addURI(CatPicturesConstants.AUTHORITY, CatPicturesTable.TABLE_NAME,
+				MATCHER_CAT_PICTURES);
+
+		// Add a pattern to route URIs terminated with a cat picture ID
+		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY,
+				CatPicturesTable.TABLE_NAME + "/#", MATCHER_CAT_PICTURE_ID);
 
 		// Create and initialize a projection map that returns all columns,
-		// This map returns a column name for a given string. The two are usually equal, but we need this structure
+		// This map returns a column name for a given string. The two are
+		// usually equal, but we need this structure
 		// later, down in .query()
-		TimelineProjectionMap = new HashMap<String, String>();
+		timelineProjectionMap = new HashMap<String, String>();
 		for (String column : CatPicturesTable.ALL_COLUMNS) {
-			TimelineProjectionMap.put(column, column);
+			timelineProjectionMap.put(column, column);
 		}
 	}
 
 	@Override
 	public boolean onCreate() {
 		this.dbHelper = new ProviderDbHelper(this.getContext());
-		return true; // if there are any issues, they'll be reported as exceptions
+		/* if there are any issues, they'll be reported as exceptions */
+		return true;
 	}
 
 	@Override
@@ -75,15 +85,19 @@ public class TimelineProvider extends ContentProvider {
 		db.beginTransaction();
 		try {
 			switch (uriMatcher.match(uri)) {
-			case MATCHER_TIMELINE:
-				// Delete all the rage comics matching the where column/value pairs
+			case MATCHER_CAT_PICTURES:
+				/*
+				 * Delete all the cat pictures matching the where column/value
+				 * pairs
+				 */
 				deletedRowsCount = db.delete(CatPicturesTable.TABLE_NAME, whereClause, whereValues);
 				break;
 
-			case MATCHER_TWEET:
-				//Delete the comic with the given ID
-				String tweetId = uri.getPathSegments().get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
-				finalWhere = CatPicturesTable._ID + " = " + tweetId;
+			case MATCHER_CAT_PICTURE_ID:
+				/* Delete the cat picture with the given ID */
+				String catPictureId = uri.getPathSegments().get(
+						CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
+				finalWhere = CatPicturesTable._ID + " = " + catPictureId;
 				if (whereClause != null) {
 					finalWhere = finalWhere + " AND " + whereClause;
 				}
@@ -110,7 +124,7 @@ public class TimelineProvider extends ContentProvider {
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues) {
 		// Validate the incoming URI.
-		if (uriMatcher.match(uri) != MATCHER_TIMELINE) {
+		if (uriMatcher.match(uri) != MATCHER_CAT_PICTURES) {
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
@@ -121,49 +135,61 @@ public class TimelineProvider extends ContentProvider {
 			throw new SQLException("ContentValues arg for .insert() is null, cannot insert row.");
 		}
 
-		long newRowId = this.dbHelper.getWritableDatabase().insert(CatPicturesTable.TABLE_NAME, null, values);
+		long newRowId = this.dbHelper.getWritableDatabase().insert(CatPicturesTable.TABLE_NAME,
+				null, values);
 
 		if (newRowId > 0) { // if rowID is -1, it means the insert failed
-			// Build a new Timeline URI with the new tweet's ID appended to it.
-			Uri tweetUri = ContentUris.withAppendedId(CatPicturesTable.CONTENT_ID_URI_BASE, newRowId);
+			// Build a new cat picture URI with the new cat picture's ID
+			// appended to it.
+			Uri catPictureUri = ContentUris.withAppendedId(CatPicturesTable.CONTENT_ID_URI_BASE,
+					newRowId);
 			// Notify observers that our data changed.
-			getContext().getContentResolver().notifyChange(tweetUri, null);
-			return tweetUri;
+			getContext().getContentResolver().notifyChange(catPictureUri, null);
+			return catPictureUri;
 		}
 
-		throw new SQLException("Failed to insert row into " + uri); // Insert failed: halt and catch fire.
+		/* insert failed; halt and catch fire */
+		throw new SQLException("Failed to insert row into " + uri);
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] selectedColumns, String whereClause, String[] whereValues, String sortOrder) {
+	public Cursor query(Uri uri, String[] selectedColumns, String whereClause,
+			String[] whereValues, String sortOrder) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(CatPicturesTable.TABLE_NAME);
 
-		// Choose the projection and adjust the "where" clause based on URI pattern-matching.
+		// Choose the projection and adjust the "where" clause based on URI
+		// pattern-matching.
 		switch (uriMatcher.match(uri)) {
-		case MATCHER_TIMELINE:
-			qb.setProjectionMap(TimelineProjectionMap);
+		case MATCHER_CAT_PICTURES:
+			qb.setProjectionMap(timelineProjectionMap);
 			break;
 
-		// asking for a single comic - use the rage comics projection, but add a where clause to only return the one
-		// comic
-		case MATCHER_TWEET:
-			qb.setProjectionMap(TimelineProjectionMap);
-			// Find the comic ID itself in the incoming URI
+		/*
+		 * asking for a single cat picture - use the cat pictures projection,
+		 * but add a where clause to only return the one cat picture
+		 */
+		case MATCHER_CAT_PICTURE_ID:
+			qb.setProjectionMap(timelineProjectionMap);
+			// Find the cat picture ID itself in the incoming URI
 			String id = uri.getPathSegments().get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
 			qb.appendWhere(CatPicturesTable._ID + "=" + id);
 			break;
 
 		default:
-			// If the URI doesn't match any of the known patterns, throw an exception.
+			// If the URI doesn't match any of the known patterns, throw an
+			// exception.
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
+		
 		// the two nulls here are 'grouping' and 'filtering by group'
-		Cursor cursor = qb.query(db, selectedColumns, whereClause, whereValues, null, null, sortOrder);
+		Cursor cursor = qb.query(db, selectedColumns, whereClause, whereValues, null, null,
+				sortOrder);
 
-		// Tell the Cursor about the URI to watch, so it knows when its source data changes
+		// Tell the Cursor about the URI to watch, so it knows when its source
+		// data changes
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;
 	}
@@ -179,20 +205,23 @@ public class TimelineProvider extends ContentProvider {
 		try {
 			switch (uriMatcher.match(uri)) {
 
-			case MATCHER_TIMELINE:
+			case MATCHER_CAT_PICTURES:
 				// Perform the update and return the number of rows updated.
-				updatedRowsCount = db.update(CatPicturesTable.TABLE_NAME, updateValues, whereClause, whereValues);
+				updatedRowsCount = db.update(CatPicturesTable.TABLE_NAME, updateValues,
+						whereClause, whereValues);
 				break;
 
-			case MATCHER_TWEET:
-				String id = uri.getPathSegments().get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
+			case MATCHER_CAT_PICTURE_ID:
+				String id = uri.getPathSegments()
+						.get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
 				finalWhere = CatPicturesTable._ID + " = " + id;
 
 				// if we were passed a 'where' arg, add that to our 'finalWhere'
 				if (whereClause != null) {
 					finalWhere = finalWhere + " AND " + whereClause;
 				}
-				updatedRowsCount = db.update(CatPicturesTable.TABLE_NAME, updateValues, finalWhere, whereValues);
+				updatedRowsCount = db.update(CatPicturesTable.TABLE_NAME, updateValues, finalWhere,
+						whereValues);
 				break;
 
 			default:
@@ -217,7 +246,7 @@ public class TimelineProvider extends ContentProvider {
 		return updatedRowsCount;
 	}
 
-	//Default bulkInsert is terrible.  Make it better!
+	// Default bulkInsert is terrible. Make it better!
 	@Override
 	public int bulkInsert(Uri uri, ContentValues[] values) {
 		this.validateOrThrow(uri);
@@ -231,8 +260,10 @@ public class TimelineProvider extends ContentProvider {
 				insertedCount++;
 			}
 			db.setTransactionSuccessful();
-			// Build a new Node URI appended with the row ID of the last node to get inserted in the batch
-			Uri nodeUri = ContentUris.withAppendedId(CatPicturesTable.CONTENT_ID_URI_BASE, newRowId);
+			// Build a new Node URI appended with the row ID of the last node to
+			// get inserted in the batch
+			Uri nodeUri = ContentUris
+					.withAppendedId(CatPicturesTable.CONTENT_ID_URI_BASE, newRowId);
 			// Notify observers that our data changed.
 			getContext().getContentResolver().notifyChange(nodeUri, null);
 			return insertedCount;
@@ -242,9 +273,10 @@ public class TimelineProvider extends ContentProvider {
 		}
 	}
 
-	//Used by our implementation of builkInsert
+	// Used by our implementation of builkInsert
 	private long insert(Uri uri, ContentValues initialValues, SQLiteDatabase writableDb) {
-		// NOTE: this method does not initiate a transaction - this is up to the caller!
+		// NOTE: this method does not initiate a transaction - this is up to the
+		// caller!
 		ContentValues values;
 		if (initialValues != null) {
 			values = new ContentValues(initialValues);
@@ -254,14 +286,19 @@ public class TimelineProvider extends ContentProvider {
 
 		long newRowId = writableDb.insert(CatPicturesTable.TABLE_NAME, null, values);
 		if (newRowId == -1) { // if rowID is -1, it means the insert failed
-			throw new SQLException("Failed to insert row into " + uri); // Insert failed: halt and catch fire.
+			throw new SQLException("Failed to insert row into " + uri); // Insert
+																		// failed:
+																		// halt
+																		// and
+																		// catch
+																		// fire.
 		}
 		return newRowId;
 	}
 
 	private void validateOrThrow(Uri uri) {
 		// Validate the incoming URI.
-		if (uriMatcher.match(uri) != MATCHER_TIMELINE) {
+		if (uriMatcher.match(uri) != MATCHER_CAT_PICTURES) {
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 	}
@@ -269,10 +306,10 @@ public class TimelineProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
-		case MATCHER_TIMELINE:
-			return TIMELINE_CONTENT_TYPE;
-		case MATCHER_TWEET:
-			return TIMELINE_CONTENT_ITEM_TYPE;
+		case MATCHER_CAT_PICTURES:
+			return CONTENT_TYPE;
+		case MATCHER_CAT_PICTURE_ID:
+			return CONTENT_ITEM_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -281,16 +318,8 @@ public class TimelineProvider extends ContentProvider {
 	@Override
 	public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
 		File file = new File(this.getContext().getFilesDir(), uri.getPath());
-		ParcelFileDescriptor parcel = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+		ParcelFileDescriptor parcel = ParcelFileDescriptor.open(file,
+				ParcelFileDescriptor.MODE_READ_ONLY);
 		return parcel;
 	}
-
-//	public AssetFileDescriptor openTypedAssetFile(Uri uri, String mimeTypeFilter, Bundle opts) {
-//		try {
-//			return super.openTypedAssetFile(uri, mimeTypeFilter, opts);
-//		} catch (FileNotFoundException e) {
-//			Log.e(TAG, "OH NOES!  Can't find file: " + uri);
-//		}
-//		return null;
-//	}
 }

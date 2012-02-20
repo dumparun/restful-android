@@ -1,9 +1,6 @@
 package mn.aug.restfulandroid.provider;
 
-import static android.provider.BaseColumns._ID;
-import static mn.aug.restfulandroid.provider.ProfileConstants.NAME;
-import static mn.aug.restfulandroid.provider.ProfileConstants.TABLE_NAME;
-import mn.aug.restfulandroid.provider.TimelineProviderContract.TimelineTable;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -28,31 +25,20 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		
-		// CREATE TIMELINE TABLE
+		/* Create cat pictures table */
 		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("CREATE TABLE " + TimelineTable.TABLE_NAME + " (");
-		sqlBuilder.append(TimelineTable._ID + " INTEGER, ");
-		sqlBuilder.append(TimelineTable._STATUS + " TEXT, ");
-		sqlBuilder.append(TimelineTable._RESULT + " INTEGER, ");
-		sqlBuilder.append(TimelineTable.AUTHOR + " TEXT, ");
-		sqlBuilder.append(TimelineTable.TWEET_TEXT + " TEXT, ");
-		sqlBuilder.append(TimelineTable.CREATED + " INTEGER, ");
+		sqlBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
+		sqlBuilder.append(CatPicturesTable._ID + " INTEGER, ");
+		sqlBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
+		sqlBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
+		sqlBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
+		sqlBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
+		sqlBuilder.append(CatPicturesTable.CREATED + " INTEGER, ");
 		sqlBuilder.append(");");
 		String sql = sqlBuilder.toString();
 		Log.i(TAG, "Creating DB table with string: '" + sql + "'");
 		db.execSQL(sql);
 		
-		// CREATE PROFILE TABLE
-		sqlBuilder = new StringBuilder();
-		sqlBuilder.append("CREATE TABLE " + ProfileConstants.TABLE_NAME + " (");
-		sqlBuilder.append(ResourceTable._ID + " INTEGER, ");
-		sqlBuilder.append(ResourceTable._STATUS + " TEXT, ");
-		sqlBuilder.append(ResourceTable._RESULT + " INTEGER, ");
-		sqlBuilder.append(ProfileConstants.NAME + " TEXT, ");
-		
-		sql = sqlBuilder.toString();
-		Log.i(TAG, "Creating DB table with string: '" + sql + "'");
-		db.execSQL(sql);
 	}
 
 	@Override

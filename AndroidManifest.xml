@@ -33,10 +33,10 @@
                 </data>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.TimelineActivity" />
+        <activity android:name=".activity.CatPicturesActivity" />
         <activity android:name=".activity.AboutActivity" />
 
-        <service android:name=".service.TwitterService" />
+        <service android:name=".service.CatPicturesServiceImpl" />
 
         <provider
             android:name=".provider.ProfileProvider"

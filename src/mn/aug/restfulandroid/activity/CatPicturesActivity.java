@@ -14,19 +14,19 @@ import android.widget.Toast;
 
 import mn.aug.restfulandroid.R;
 import mn.aug.restfulandroid.activity.base.RESTfulListActivity;
-import mn.aug.restfulandroid.provider.ProfileConstants;
+import mn.aug.restfulandroid.provider.CatPicturesConstants;
 import mn.aug.restfulandroid.security.AuthorizationManager;
-import mn.aug.restfulandroid.service.TwitterServiceHelper;
+import mn.aug.restfulandroid.service.CatPicturesServiceHelper;
 import mn.aug.restfulandroid.util.Logger;
 
-public class TimelineActivity extends RESTfulListActivity {
+public class CatPicturesActivity extends RESTfulListActivity {
 
-	private static final String TAG = TimelineActivity.class.getSimpleName();
+	private static final String TAG = CatPicturesActivity.class.getSimpleName();
 
 	private Long requestId;
 	private BroadcastReceiver requestReceiver;
 
-	private TwitterServiceHelper mTwitterServiceHelper;
+	private CatPicturesServiceHelper mCatPicturesServiceHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +53,14 @@ public class TimelineActivity extends RESTfulListActivity {
 		 * b. If not, make the request (already coded below).
 		 */
 
-		IntentFilter filter = new IntentFilter(TwitterServiceHelper.ACTION_REQUEST_RESULT);
+		IntentFilter filter = new IntentFilter(CatPicturesServiceHelper.ACTION_REQUEST_RESULT);
 		requestReceiver = new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
 
-				long resultRequestId = intent
-						.getLongExtra(TwitterServiceHelper.EXTRA_REQUEST_ID, 0);
+				long resultRequestId = intent.getLongExtra(
+						CatPicturesServiceHelper.EXTRA_REQUEST_ID, 0);
 
 				Logger.debug(TAG, "Received intent " + intent.getAction() + ", request ID "
 						+ resultRequestId);
@@ -68,10 +68,11 @@ public class TimelineActivity extends RESTfulListActivity {
 				if (resultRequestId == requestId) {
 
 					Logger.debug(TAG, "Result is for our request ID");
-					
+
 					setRefreshing(false);
 
-					int resultCode = intent.getIntExtra(TwitterServiceHelper.EXTRA_RESULT_CODE, 0);
+					int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE,
+							0);
 
 					Logger.debug(TAG, "Result code = " + resultCode);
 
@@ -92,13 +93,14 @@ public class TimelineActivity extends RESTfulListActivity {
 			}
 		};
 
-		mTwitterServiceHelper = TwitterServiceHelper.getInstance(this);
+		mCatPicturesServiceHelper = CatPicturesServiceHelper.getInstance(this);
+		
 		this.registerReceiver(requestReceiver, filter);
 
 		if (requestId == null) {
 			setRefreshing(true);
-			requestId = mTwitterServiceHelper.getProfile();
-		} else if (mTwitterServiceHelper.isRequestPending(requestId)) {
+			requestId = mCatPicturesServiceHelper.getCatPictures();
+		} else if (mCatPicturesServiceHelper.isRequestPending(requestId)) {
 			setRefreshing(true);
 		} else {
 			setRefreshing(false);
@@ -112,10 +114,11 @@ public class TimelineActivity extends RESTfulListActivity {
 
 		String name = null;
 
-		Cursor cursor = getContentResolver().query(ProfileConstants.CONTENT_URI, null, null, null, null);
+		Cursor cursor = getContentResolver().query(CatPicturesConstants.CONTENT_URI, null, null,
+				null, null);
 
 		if (cursor.moveToFirst()) {
-			int index = cursor.getColumnIndexOrThrow(ProfileConstants.NAME);
+			int index = cursor.getColumnIndexOrThrow(CatPicturesConstants.NAME);
 			name = cursor.getString(index);
 		}
 
@@ -141,7 +144,7 @@ public class TimelineActivity extends RESTfulListActivity {
 	private void showNameToast(String name) {
 		showToast("You are logged in as\n" + name);
 	}
-	
+
 	private void showToast(String message) {
 		if (!isFinishing()) {
 			Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
@@ -178,6 +181,6 @@ public class TimelineActivity extends RESTfulListActivity {
 
 	@Override
 	protected void refresh() {
-		requestId = mTwitterServiceHelper.getProfile();
+		requestId = mCatPicturesServiceHelper.getCatPictures();
 	}
 }

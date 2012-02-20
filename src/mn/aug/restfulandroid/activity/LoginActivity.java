@@ -45,7 +45,7 @@ public class LoginActivity extends RESTfulActivity {
 	}
 
 	private void startHomeActivity() {
-		Intent startHomeActivity = new Intent(this, TimelineActivity.class);
+		Intent startHomeActivity = new Intent(this, CatPicturesActivity.class);
 		startActivity(startHomeActivity);
 		finish();
 	}

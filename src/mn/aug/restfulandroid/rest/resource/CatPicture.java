@@ -1,10 +1,16 @@
 package mn.aug.restfulandroid.rest.resource;
 
+import mn.aug.restfulandroid.provider.CatPicturesConstants;
 import mn.aug.restfulandroid.util.JSONUtil;
 
 import org.json.JSONObject;
 
+import android.net.Uri;
+
 public class CatPicture implements Resource {
+
+	public static final Uri CONTENT_URI = Uri.parse("content://" + CatPicturesConstants.AUTHORITY
+			+ "/" + CatPicturesConstants.TABLE_NAME);
 
 	private String id;
 	private String title;

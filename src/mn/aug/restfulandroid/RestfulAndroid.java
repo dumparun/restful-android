@@ -1,17 +1,18 @@
 package mn.aug.restfulandroid;
 
-import android.app.Application;
-import android.content.Context;
-
-import mn.aug.restfulandroid.R;
 import mn.aug.restfulandroid.rest.RestClient;
 import mn.aug.restfulandroid.rest.RestClientImpl;
+import mn.aug.restfulandroid.service.CatPicturesService;
+import mn.aug.restfulandroid.service.CatPicturesServiceImpl;
 import mn.aug.restfulandroid.util.Logger;
+import android.app.Application;
+import android.content.Context;
 
 public class RestfulAndroid extends Application {
 
 	private static Context mAppContext;
 	private static RestClient mRestClient;
+	private static Class<? extends CatPicturesService> mCatPicturesServiceClass = CatPicturesServiceImpl.class;
 
 	@Override
 	public void onCreate() {
@@ -59,6 +60,15 @@ public class RestfulAndroid extends Application {
 	 */
 	public static void reset() {
 		mRestClient = new RestClientImpl();
+		mCatPicturesServiceClass = CatPicturesServiceImpl.class;
+	}
+
+	public static void setCatPicturesServiceClass(Class<? extends CatPicturesService> c) {
+		mCatPicturesServiceClass = c;
+	}
+	
+	public static Class<? extends CatPicturesService> getCatPicturesServiceClass() {
+		return mCatPicturesServiceClass;
 	}
 
 }

@@ -1,9 +1,9 @@
 package mn.aug.restfulandroid.provider;
 
 import static android.provider.BaseColumns._ID;
-import static mn.aug.restfulandroid.provider.ProfileConstants.AUTHORITY;
-import static mn.aug.restfulandroid.provider.ProfileConstants.CONTENT_URI;
-import static mn.aug.restfulandroid.provider.ProfileConstants.TABLE_NAME;
+import static mn.aug.restfulandroid.provider.CatPicturesConstants.AUTHORITY;
+import static mn.aug.restfulandroid.provider.CatPicturesConstants.CONTENT_URI;
+import static mn.aug.restfulandroid.provider.CatPicturesConstants.TABLE_NAME;
 import mn.aug.restfulandroid.util.Logger;
 import android.content.ContentProvider;
 import android.content.ContentUris;
