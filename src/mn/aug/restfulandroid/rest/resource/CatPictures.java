@@ -3,10 +3,16 @@ package mn.aug.restfulandroid.rest.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.net.Uri;
+
 public class CatPictures implements Resource {
+	
+	public static final Uri CONTENT_URI = CatPicturesTable.CONTENT_URI;
 
 	List<CatPicture> catPictures;
 

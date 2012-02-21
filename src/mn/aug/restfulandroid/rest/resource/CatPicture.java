@@ -1,16 +1,13 @@
 package mn.aug.restfulandroid.rest.resource;
 
-import mn.aug.restfulandroid.provider.CatPicturesConstants;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.util.JSONUtil;
 
 import org.json.JSONObject;
 
-import android.net.Uri;
+import android.content.ContentValues;
 
 public class CatPicture implements Resource {
-
-	public static final Uri CONTENT_URI = Uri.parse("content://" + CatPicturesConstants.AUTHORITY
-			+ "/" + CatPicturesConstants.TABLE_NAME);
 
 	private String id;
 	private String title;
@@ -54,4 +51,13 @@ public class CatPicture implements Resource {
 		return thumbnail;
 	}
 
+	public ContentValues toContentValues() {
+		ContentValues rowData = new ContentValues();
+		rowData.put(CatPicturesTable._ID, this.id);
+		rowData.put(CatPicturesTable.TITLE, this.title);
+		rowData.put(CatPicturesTable.URL, this.url);
+		rowData.put(CatPicturesTable.AUTHOR, this.author);
+		
+		return rowData;
+	}
 }

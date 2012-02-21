@@ -1,14 +1,19 @@
 package mn.aug.restfulandroid.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.rest.RestMethod;
 import mn.aug.restfulandroid.rest.RestMethodFactory;
 import mn.aug.restfulandroid.rest.RestMethodFactory.Method;
 import mn.aug.restfulandroid.rest.RestMethodResult;
 import mn.aug.restfulandroid.rest.resource.CatPicture;
 import mn.aug.restfulandroid.rest.resource.CatPictures;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 /**
  * The CatPicturesProcessor is a POJO for processing cat pictures requests. For
@@ -53,7 +58,7 @@ public class DefaultCatPicturesProcessor implements CatPicturesProcessor {
 
 		@SuppressWarnings("unchecked")
 		RestMethod<CatPictures> getCatPicturesMethod = RestMethodFactory.getInstance(mContext)
-				.getRestMethod(CatPicture.CONTENT_URI, Method.GET, null, null);
+				.getRestMethod(CatPictures.CONTENT_URI, Method.GET, null, null);
 		RestMethodResult<CatPictures> result = getCatPicturesMethod.execute();
 
 		/*
@@ -74,11 +79,31 @@ public class DefaultCatPicturesProcessor implements CatPicturesProcessor {
 
 		CatPictures catPictures = result.getResource();
 		List<CatPicture> catPics = catPictures.getCatPictures();
+		ContentResolver cr = this.mContext.getContentResolver();
+		
+		//TODO Get RestMethod to pull only data since last request, 
+		// so we don't need to do this expensive hack.
+		List<String> existingIds = getExistingIds(cr);
 
 		// insert/update row for each cat picture in the list
-		for (CatPicture catPic : catPics) {
-			// TODO
+		for (CatPicture catPic : catPics) {	
+			if(!existingIds.isEmpty() && !existingIds.contains(catPic.getId())){				
+				cr.insert(CatPictures.CONTENT_URI, catPic.toContentValues());
+			}
 		}
 
+	}
+	
+	private List<String> getExistingIds(ContentResolver cr){
+		List<String> ids = new ArrayList<String>();
+		String[] columns = new String[]{CatPicturesTable.ID};
+		Cursor cursor = cr.query(CatPictures.CONTENT_URI, columns, null, null, null);
+		if(cursor.moveToFirst()){
+			do {
+				ids.add(cursor.getString(0));
+			} while(cursor.moveToNext());
+		}
+		
+		return ids;
 	}
 }

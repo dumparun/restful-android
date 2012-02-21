@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import mn.aug.restfulandroid.provider.CatPicturesConstants;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.rest.method.GetCatPicturesRestMethod;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -21,7 +23,7 @@ public class RestMethodFactory {
 	private RestMethodFactory(Context context) {
 		mContext = context.getApplicationContext();
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI(CatPicturesConstants.AUTHORITY, CatPicturesConstants.TABLE_NAME, CAT_PICTURES);
+		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY, CatPicturesTable.TABLE_NAME, CAT_PICTURES);
 	}
 
 	public static RestMethodFactory getInstance(Context context) {

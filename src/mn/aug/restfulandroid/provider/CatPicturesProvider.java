@@ -51,7 +51,7 @@ public class CatPicturesProvider extends ContentProvider {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
 		// Add a pattern to route URIs terminated with just "catpicture"
-		uriMatcher.addURI(CatPicturesConstants.AUTHORITY, CatPicturesTable.TABLE_NAME,
+		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY, CatPicturesTable.TABLE_NAME,
 				MATCHER_CAT_PICTURES);
 
 		// Add a pattern to route URIs terminated with a cat picture ID

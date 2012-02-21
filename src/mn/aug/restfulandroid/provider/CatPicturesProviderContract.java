@@ -17,7 +17,7 @@ public final class CatPicturesProviderContract {
 		private static final String URI_PATH_CAT_PICTURES = "/" + TABLE_NAME;
 
 		// Note the slash on the end of this one, as opposed to the
-		// URI_PATH_TIMELINE, which has no slash.
+		// URI_PATH_CAT_PICTURES, which has no slash.
 		private static final String URI_PATH_CAT_PICTURE_ID = "/" + TABLE_NAME + "/";
 
 		public static final int CAT_PICTURE_ID_PATH_POSITION = 1;
@@ -31,7 +31,7 @@ public final class CatPicturesProviderContract {
 		public static final Uri CONTENT_ID_URI_BASE = Uri.parse(SCHEME + AUTHORITY
 				+ URI_PATH_CAT_PICTURES);
 		
-		// content://mn.aug.restfulandroid.timelineprovider/timeline/#
+		// content://mn.aug.restfulandroid.catpicturesprovider/catpictures/#
 		public static final Uri CONTENT_ID_URI_PATTERN = Uri.parse(SCHEME + AUTHORITY
 				+ URI_PATH_CAT_PICTURES + "#");
 

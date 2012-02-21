@@ -15,6 +15,8 @@ import android.widget.Toast;
 import mn.aug.restfulandroid.R;
 import mn.aug.restfulandroid.activity.base.RESTfulListActivity;
 import mn.aug.restfulandroid.provider.CatPicturesConstants;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.service.CatPicturesServiceHelper;
 import mn.aug.restfulandroid.util.Logger;
@@ -41,10 +43,10 @@ public class CatPicturesActivity extends RESTfulListActivity {
 	protected void onResume() {
 		super.onResume();
 
-		String name = getNameFromContentProvider();
-		if (name != null) {
-			showNameToast(name);
-		}
+//		String name = getNameFromContentProvider();
+//		if (name != null) {
+//			showNameToast(name);
+//		}
 
 		/*
 		 * 1. Register for broadcast from TwitterServiceHelper
@@ -79,9 +81,9 @@ public class CatPicturesActivity extends RESTfulListActivity {
 					if (resultCode == 200) {
 
 						Logger.debug(TAG, "Updating UI with new data");
-
-						String name = getNameFromContentProvider();
-						showNameToast(name);
+//
+//						String name = getNameFromContentProvider();
+//						showNameToast(name);
 
 					} else {
 						showToast(getString(R.string.error_occurred));
@@ -104,28 +106,10 @@ public class CatPicturesActivity extends RESTfulListActivity {
 			setRefreshing(true);
 		} else {
 			setRefreshing(false);
-			name = getNameFromContentProvider();
-			showNameToast(name);
 		}
 
 	}
 
-	private String getNameFromContentProvider() {
-
-		String name = null;
-
-		Cursor cursor = getContentResolver().query(CatPicturesConstants.CONTENT_URI, null, null,
-				null, null);
-
-		if (cursor.moveToFirst()) {
-			int index = cursor.getColumnIndexOrThrow(CatPicturesConstants.NAME);
-			name = cursor.getString(index);
-		}
-
-		cursor.close();
-
-		return name;
-	}
 
 	@Override
 	protected void onPause() {
