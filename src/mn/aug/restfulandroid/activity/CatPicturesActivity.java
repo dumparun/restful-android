@@ -1,25 +1,27 @@
 package mn.aug.restfulandroid.activity;
 
+import mn.aug.restfulandroid.R;
+import mn.aug.restfulandroid.activity.base.RESTfulListActivity;
+import mn.aug.restfulandroid.provider.CatPicturesConstants;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
+import mn.aug.restfulandroid.rest.resource.CatPictures;
+import mn.aug.restfulandroid.security.AuthorizationManager;
+import mn.aug.restfulandroid.service.CatPicturesServiceHelper;
+import mn.aug.restfulandroid.util.Logger;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Contacts.People;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-
-import mn.aug.restfulandroid.R;
-import mn.aug.restfulandroid.activity.base.RESTfulListActivity;
-import mn.aug.restfulandroid.provider.CatPicturesConstants;
-import mn.aug.restfulandroid.provider.CatPicturesProviderContract;
-import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
-import mn.aug.restfulandroid.security.AuthorizationManager;
-import mn.aug.restfulandroid.service.CatPicturesServiceHelper;
-import mn.aug.restfulandroid.util.Logger;
 
 public class CatPicturesActivity extends RESTfulListActivity {
 
@@ -37,16 +39,36 @@ public class CatPicturesActivity extends RESTfulListActivity {
 		setRefreshable(true);
 
 		super.onCreate(savedInstanceState);
+
+		// SOME CODE
+		Cursor cursor = getContentResolver().query(CatPictures.CONTENT_URI,
+				CatPicturesTable.DISPLAY_COLUMNS, null, null, null);
+		startManagingCursor(cursor);
+
+		// THE XML DEFINED VIEWS WHICH THE DATA WILL BE BOUND TO
+
+		int[] to = new int[] { R.id.id, R.id.thumbnail, R.id.title };
+
+		// CREATE THE ADAPTER USING THE CURSOR POINTING TO THE DESIRED DATA AS
+		// WELL AS THE LAYOUT INFORMATION
+
+		SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, R.layout.cat_pictures_list_item, cursor,
+				CatPicturesTable.DISPLAY_COLUMNS, to);
+
+		// SET THIS ADAPTER AS YOUR LISTACTIVITY'S ADAPTER
+
+		setListAdapter(mAdapter);
+
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-//		String name = getNameFromContentProvider();
-//		if (name != null) {
-//			showNameToast(name);
-//		}
+		// String name = getNameFromContentProvider();
+		// if (name != null) {
+		// showNameToast(name);
+		// }
 
 		/*
 		 * 1. Register for broadcast from TwitterServiceHelper
@@ -79,14 +101,7 @@ public class CatPicturesActivity extends RESTfulListActivity {
 					Logger.debug(TAG, "Result code = " + resultCode);
 
 					if (resultCode == 200) {
-
 						Logger.debug(TAG, "Updating UI with new data");
-//
-//						String name = getNameFromContentProvider();
-//						showNameToast(name);
-
-					} else {
-						showToast(getString(R.string.error_occurred));
 					}
 				} else {
 					Logger.debug(TAG, "Result is NOT for our request ID");
@@ -96,7 +111,7 @@ public class CatPicturesActivity extends RESTfulListActivity {
 		};
 
 		mCatPicturesServiceHelper = CatPicturesServiceHelper.getInstance(this);
-		
+
 		this.registerReceiver(requestReceiver, filter);
 
 		if (requestId == null) {
@@ -110,7 +125,6 @@ public class CatPicturesActivity extends RESTfulListActivity {
 
 	}
 
-
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -122,18 +136,6 @@ public class CatPicturesActivity extends RESTfulListActivity {
 			} catch (IllegalArgumentException e) {
 				Logger.error(TAG, e.getLocalizedMessage(), e);
 			}
-		}
-	}
-
-	private void showNameToast(String name) {
-		showToast("You are logged in as\n" + name);
-	}
-
-	private void showToast(String message) {
-		if (!isFinishing()) {
-			Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-			toast.setGravity(Gravity.CENTER, 0, 0);
-			toast.show();
 		}
 	}
 

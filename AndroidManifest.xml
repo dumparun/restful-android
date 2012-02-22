@@ -14,37 +14,22 @@
         android:label="@string/app_name"
         android:theme="@style/RESTfulAndroidTheme" >
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.CatPicturesActivity"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="callback"
-                    android:scheme="restful-android" >
-                </data>
-            </intent-filter>
         </activity>
-        <activity android:name=".activity.CatPicturesActivity" />
+
         <activity android:name=".activity.AboutActivity" />
 
         <service android:name=".service.DefaultCatPicturesService" />
 
         <provider
-            android:name=".provider.ProfileProvider"
-            android:authorities="mn.aug.restfulandroid.profiles" />
-        
-        <provider
-            android:name=".provider.TimelineProvider"
-            android:authorities="mn.aug.restfulandroid.timelineprovider" />
+            android:name=".provider.CatPicturesProvider"
+            android:authorities="mn.aug.restfulandroid.catpicturesprovider" />
     </application>
 
 </manifest>

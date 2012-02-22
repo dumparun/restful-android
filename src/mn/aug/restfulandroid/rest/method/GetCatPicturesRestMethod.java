@@ -20,7 +20,7 @@ public class GetCatPicturesRestMethod extends AbstractRestMethod<CatPictures> {
 	
 	private Context mContext;
 
-	private static final URI CAT_PICTURES_URI = URI.create("www.reddit.com/r/catpictures/.json");
+	private static final URI CAT_PICTURES_URI = URI.create("http://www.reddit.com/r/catpictures/.json");
 
 	private Map<String, List<String>> headers;
 

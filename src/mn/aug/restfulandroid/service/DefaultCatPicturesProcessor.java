@@ -87,7 +87,7 @@ public class DefaultCatPicturesProcessor implements CatPicturesProcessor {
 
 		// insert/update row for each cat picture in the list
 		for (CatPicture catPic : catPics) {	
-			if(!existingIds.isEmpty() && !existingIds.contains(catPic.getId())){				
+			if(existingIds.isEmpty() || !existingIds.contains(catPic.getId())){				
 				cr.insert(CatPictures.CONTENT_URI, catPic.toContentValues());
 			}
 		}
