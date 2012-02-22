@@ -7,8 +7,8 @@ import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.rest.resource.Resource;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.security.RequestSigner;
+import mn.aug.restfulandroid.util.Logger;
 import android.content.Context;
-
 
 public abstract class AbstractRestMethod<T extends Resource> implements RestMethod<T> {
 
@@ -24,7 +24,7 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		Response response = doRequest(request);
 		return buildResult(response);
 	}
-	
+
 	protected abstract Context getContext();
 
 	/**
@@ -43,6 +43,7 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 
 		try {
 			responseBody = new String(response.body, getCharacterEncoding(response.headers));
+			logResponse(status, responseBody);
 			resource = parseResponseBody(responseBody);
 		} catch (Exception ex) {
 			// TODO Should we set some custom status code?
@@ -52,8 +53,26 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		return new RestMethodResult<T>(status, statusMsg, resource);
 	}
 
+	/**
+	 * Returns the log tag for the class extending AbstractRestMethod
+	 * 
+	 * @return log tag
+	 */
+	protected abstract String getLogTag();
+
+	/**
+	 * Build the {@link Request}.
+	 * 
+	 * @return Request for this REST method
+	 */
 	protected abstract Request buildRequest();
-	
+
+	/**
+	 * Determines whether the REST method requires authentication
+	 * 
+	 * @return <code>true</code> if authentication is required,
+	 *         <code>false</code> otherwise
+	 */
 	protected boolean requiresAuthorization() {
 		return true;
 	}
@@ -63,12 +82,22 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 	private Response doRequest(Request request) {
 
 		RestClient client = RestfulAndroid.getRestClient();
+		logRequest(request);
 		return client.execute(request);
 	}
 
 	private String getCharacterEncoding(Map<String, List<String>> headers) {
 		// TODO get value from headers
 		return DEFAULT_ENCODING;
+	}
+
+	private void logRequest(Request request) {
+		Logger.debug(getLogTag(), "Request: " + request.getMethod().toString() + " "
+				+ request.getRequestUri().toASCIIString());
+	}
+
+	private void logResponse(int status, String responseBody) {
+		Logger.debug(getLogTag(), "Response: status=" + status + ", body=" + responseBody);
 	}
 
 }

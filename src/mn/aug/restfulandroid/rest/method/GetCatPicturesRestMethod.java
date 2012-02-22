@@ -1,8 +1,6 @@
 package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import mn.aug.restfulandroid.rest.AbstractRestMethod;
 import mn.aug.restfulandroid.rest.Request;
@@ -17,23 +15,31 @@ import android.content.Context;
 public class GetCatPicturesRestMethod extends AbstractRestMethod<CatPictures> {
 
 	private static final String TAG = GetCatPicturesRestMethod.class.getSimpleName();
-	
+
 	private Context mContext;
 
-	private static final URI CAT_PICTURES_URI = URI.create("http://www.reddit.com/r/catpictures/.json");
+	private static final String BASE_URI = "http://www.reddit.com/r/catpictures/new/.json?sort=new&count=25";
 
-	private Map<String, List<String>> headers;
+	/* The id of the most recent cat picture we have */
+	private String mNewestId;
 
-	public GetCatPicturesRestMethod(Context context, Map<String, List<String>> headers) {
+	public GetCatPicturesRestMethod(Context context, String newestId) {
 		mContext = context.getApplicationContext();
-		this.headers = headers;
+		mNewestId = newestId;
 	}
 
 	@Override
 	protected Request buildRequest() {
-
-		Request request = new Request(Method.GET, CAT_PICTURES_URI, headers, null);
+		Request request = new Request(Method.GET, buildUri(), null, null);
 		return request;
+	}
+
+	private URI buildUri() {
+		String uriString = BASE_URI;
+		if (mNewestId != null) {
+			uriString += "&before=t3_" + mNewestId;
+		}
+		return URI.create(uriString);
 	}
 
 	@Override
@@ -54,6 +60,11 @@ public class GetCatPicturesRestMethod extends AbstractRestMethod<CatPictures> {
 	@Override
 	protected boolean requiresAuthorization() {
 		return false;
+	}
+
+	@Override
+	protected String getLogTag() {
+		return TAG;
 	}
 
 }
