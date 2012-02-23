@@ -9,6 +9,7 @@ import mn.aug.restfulandroid.rest.resource.CatPictures;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.service.CatPicturesServiceHelper;
 import mn.aug.restfulandroid.util.Logger;
+import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +24,7 @@ import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-public class CatPicturesActivity extends RESTfulListActivity {
+public class CatPicturesActivity extends ListActivity {
 
 	private static final String TAG = CatPicturesActivity.class.getSimpleName();
 
@@ -34,29 +35,21 @@ public class CatPicturesActivity extends RESTfulListActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
-		setContentResId(R.layout.home);
-		setRefreshable(true);
-
 		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.home);
 
 		// SOME CODE
 		Cursor cursor = getContentResolver().query(CatPictures.CONTENT_URI,
 				CatPicturesTable.DISPLAY_COLUMNS, null, null, null);
 		startManagingCursor(cursor);
 
-		// THE XML DEFINED VIEWS WHICH THE DATA WILL BE BOUND TO
+		// CREATE THE ADAPTER USING THE CURSOR
+		// THIS BINDS THE DATA IN THE CURSOR TO THE VIEW FOR EACH ROW IN THE LIST
 
-		int[] to = new int[] { R.id.id, R.id.thumbnail, R.id.title };
-
-		// CREATE THE ADAPTER USING THE CURSOR POINTING TO THE DESIRED DATA AS
-		// WELL AS THE LAYOUT INFORMATION
-
-		SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, R.layout.cat_pictures_list_item, cursor,
-				CatPicturesTable.DISPLAY_COLUMNS, to);
+		CatPicsCursorAdapter mAdapter = new CatPicsCursorAdapter(this, cursor);
 
 		// SET THIS ADAPTER AS YOUR LISTACTIVITY'S ADAPTER
-
 		setListAdapter(mAdapter);
 
 	}
@@ -93,8 +86,6 @@ public class CatPicturesActivity extends RESTfulListActivity {
 
 					Logger.debug(TAG, "Result is for our request ID");
 
-					setRefreshing(false);
-
 					int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE,
 							0);
 
@@ -115,13 +106,11 @@ public class CatPicturesActivity extends RESTfulListActivity {
 		this.registerReceiver(requestReceiver, filter);
 
 		if (requestId == null) {
-			setRefreshing(true);
 			requestId = mCatPicturesServiceHelper.getCatPictures();
+			// show spinner
 		} else if (mCatPicturesServiceHelper.isRequestPending(requestId)) {
-			setRefreshing(true);
-		} else {
-			setRefreshing(false);
-		}
+			// show spinner
+		} 
 
 	}
 
@@ -139,34 +128,4 @@ public class CatPicturesActivity extends RESTfulListActivity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		switch (item.getItemId()) {
-		case R.id.logout:
-			AuthorizationManager.getInstance(this).logout();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			finish();
-			break;
-		case R.id.about:
-			Intent about = new Intent(this, AboutActivity.class);
-			startActivity(about);
-			break;
-		}
-		return false;
-	}
-
-	@Override
-	protected void refresh() {
-		requestId = mCatPicturesServiceHelper.getCatPictures();
-	}
 }
