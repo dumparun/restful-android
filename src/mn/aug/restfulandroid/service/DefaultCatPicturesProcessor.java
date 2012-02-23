@@ -73,7 +73,7 @@ public class DefaultCatPicturesProcessor implements CatPicturesProcessor {
 	private String getNewestCatPictureId() {
 		ContentResolver contentResolver = mContext.getContentResolver();
 		Cursor cursor = contentResolver.query(CatPictures.CONTENT_URI,
-				new String[] { CatPicturesTable.ID }, null, null, CatPicturesTable._ID
+				new String[] { CatPicturesTable.REF_ID }, null, null, CatPicturesTable._ID
 						+ " DESC LIMIT 1");
 		if (cursor.moveToNext()) {
 			return cursor.getString(0);

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,11 +41,14 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 
 		String title = cursor.getString(cursor.getColumnIndex(CatPicturesTable.TITLE));
+		String author = cursor.getString(cursor.getColumnIndex(CatPicturesTable.AUTHOR));
 		String thumbnailUrl = cursor.getString(cursor.getColumnIndex(CatPicturesTable.THUMBNAIL));
 		File thumbnail = getLocalThumbnailFile(thumbnailUrl);
 
+		Log.d("Adapter","Row[" + title + ":" + author);
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.titleView.setText(title);	
+		holder.authorView.setText(author);	
 		holder.thumbView.setImageURI(Uri.parse(thumbnail.getPath()));
 
 	}
@@ -55,6 +59,7 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 
 		ViewHolder holder = new ViewHolder();
 		holder.titleView = (TextView) listItemView.findViewById(R.id.title);
+		holder.authorView = (TextView) listItemView.findViewById(R.id.author);
 		holder.thumbView = (ImageView) listItemView.findViewById(R.id.thumbnail);
 
 		listItemView.setTag(holder);
@@ -79,6 +84,7 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 
 	static class ViewHolder {
 		TextView titleView;
+		TextView authorView;		
 		ImageView thumbView;
 	}
 

@@ -43,7 +43,7 @@ public final class CatPicturesProviderContract {
 					CatPicturesTable._ID,
 					CatPicturesTable._STATUS,
 					CatPicturesTable._RESULT,
-					CatPicturesTable.ID,
+					CatPicturesTable.REF_ID,
 					CatPicturesTable.TITLE,
 					CatPicturesTable.URL,
 					CatPicturesTable.AUTHOR,
@@ -54,7 +54,8 @@ public final class CatPicturesProviderContract {
 			DISPLAY_COLUMNS = new String[] {
 					CatPicturesTable._ID,
 					CatPicturesTable.THUMBNAIL,
-					CatPicturesTable.TITLE
+					CatPicturesTable.TITLE,
+					CatPicturesTable.AUTHOR
 				};
 		}
 
@@ -64,7 +65,7 @@ public final class CatPicturesProviderContract {
 		 * Type: TEXT
 		 * </P>
 		 */
-		public static final String ID = "id";
+		public static final String REF_ID = "ref_id";
 
 		/**
 		 * Column name for cat picture title

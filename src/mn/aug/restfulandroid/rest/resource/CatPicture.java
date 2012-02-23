@@ -53,7 +53,7 @@ public class CatPicture implements Resource {
 
 	public ContentValues toContentValues() {
 		ContentValues rowData = new ContentValues();
-		rowData.put(CatPicturesTable.ID, this.id);
+		rowData.put(CatPicturesTable.REF_ID, this.id);
 		rowData.put(CatPicturesTable.TITLE, this.title);
 		rowData.put(CatPicturesTable.URL, this.url);
 		rowData.put(CatPicturesTable.AUTHOR, this.author);

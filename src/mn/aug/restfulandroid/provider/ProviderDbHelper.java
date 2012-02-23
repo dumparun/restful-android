@@ -37,10 +37,10 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 		/* Create cat pictures table */
 		StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
-		sqlBuilder.append(CatPicturesTable._ID + " INTEGER, ");
+		sqlBuilder.append(CatPicturesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
 		sqlBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
 		sqlBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
-		sqlBuilder.append(CatPicturesTable.ID + " TEXT, ");
+		sqlBuilder.append(CatPicturesTable.REF_ID + " TEXT, ");
 		sqlBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
 		sqlBuilder.append(CatPicturesTable.URL + " TEXT, ");
 		sqlBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
