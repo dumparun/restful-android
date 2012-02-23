@@ -1,5 +1,6 @@
 package mn.aug.restfulandroid;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -10,6 +11,7 @@ import mn.aug.restfulandroid.service.CatPicturesService;
 import mn.aug.restfulandroid.service.DefaultCatPicturesProcessor;
 import mn.aug.restfulandroid.service.DefaultCatPicturesService;
 import mn.aug.restfulandroid.util.Logger;
+
 import android.app.Application;
 import android.content.Context;
 
@@ -100,6 +102,11 @@ public class RestfulAndroid extends Application {
 
 	public static void setCatPicturesProcessorClass(Class<? extends CatPicturesProcessor> c) {
 		mCatPicturesProcessorClass = c;
+	}
+	
+	public File getThumbnailsDir() {
+		return new File(RestfulAndroid.mAppContext.getFilesDir(), "thumbnails");
+		
 	}
 
 }
