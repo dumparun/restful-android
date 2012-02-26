@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Window;
 
 public class CatPicturesActivity extends ListActivity {
 
@@ -32,6 +33,11 @@ public class CatPicturesActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// ALLOW PROGRESS SPINNER IN TITLE BAR
+		// THIS MUST COME BEFORE setContentView()!
+		this.requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setProgressBarIndeterminateVisibility(false);
 
 		setContentView(R.layout.home);
 
@@ -71,10 +77,13 @@ public class CatPicturesActivity extends ListActivity {
 		if (requestId == null) {
 			requestId = mCatPicturesServiceHelper.getCatPictures();
 			// show progress spinner
+			setProgressBarIndeterminateVisibility(true);
 		} else if (mCatPicturesServiceHelper.isRequestPending(requestId)) {
 			// show progress spinner
+			setProgressBarIndeterminateVisibility(true);
 		} else {
 			// stop progress spinner, request already received, data updated
+			setProgressBarIndeterminateVisibility(false);
 		}
 
 	}
@@ -106,7 +115,7 @@ public class CatPicturesActivity extends ListActivity {
 			if (resultRequestId == requestId) {
 				
 				// This was our request, stop the progress spinner
-				// TODO
+				CatPicturesActivity.this.setProgressBarIndeterminateVisibility(false);
 				Logger.debug(TAG, "Result is for our request ID");
 
 				// What was the result of our request?
