@@ -1,12 +1,8 @@
 package mn.aug.restfulandroid.activity;
 
 import mn.aug.restfulandroid.R;
-import mn.aug.restfulandroid.activity.base.RESTfulListActivity;
-import mn.aug.restfulandroid.provider.CatPicturesConstants;
-import mn.aug.restfulandroid.provider.CatPicturesProviderContract;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.rest.resource.CatPictures;
-import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.service.CatPicturesServiceHelper;
 import mn.aug.restfulandroid.util.Logger;
 import android.app.ListActivity;
@@ -16,22 +12,22 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Contacts.People;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 public class CatPicturesActivity extends ListActivity {
 
 	private static final String TAG = CatPicturesActivity.class.getSimpleName();
 
 	private Long requestId;
-	private BroadcastReceiver requestReceiver;
-
+	/**
+	 * Used to send and retrieve data from the underlying api. 
+	 */
 	private CatPicturesServiceHelper mCatPicturesServiceHelper;
+	/**
+	 * Receives callbacks from the service helper
+	 */
+	private BroadcastReceiver requestReceiver;
+	private IntentFilter filter = new IntentFilter(CatPicturesServiceHelper.ACTION_REQUEST_RESULT);
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +35,9 @@ public class CatPicturesActivity extends ListActivity {
 
 		setContentView(R.layout.home);
 
-		// SOME CODE
+		this.requestReceiver = new CatPicturesReceiver();
+
+		// GET EXISTING PICTURES TO INIT LIST
 		Cursor cursor = getContentResolver().query(CatPictures.CONTENT_URI,
 				CatPicturesTable.DISPLAY_COLUMNS, null, null, null);
 		startManagingCursor(cursor);
@@ -58,59 +56,26 @@ public class CatPicturesActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 
-		// String name = getNameFromContentProvider();
-		// if (name != null) {
-		// showNameToast(name);
-		// }
+		/*
+		 * 1. Register for callbacks broadcast from the CatPicturesServiceHelper
+		 */
+		this.registerReceiver(this.requestReceiver, this.filter);
 
 		/*
-		 * 1. Register for broadcast from TwitterServiceHelper
-		 * 
-		 * 2. See if we've already made a request. a. If so, check the status.
-		 * b. If not, make the request (already coded below).
+		 * 2. See if we've already made a request. 
+		 * a. If not, make the request
+		 * b. If so, check if it is still in progress or was completed while we were paused
 		 */
-
-		IntentFilter filter = new IntentFilter(CatPicturesServiceHelper.ACTION_REQUEST_RESULT);
-		requestReceiver = new BroadcastReceiver() {
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-
-				long resultRequestId = intent.getLongExtra(
-						CatPicturesServiceHelper.EXTRA_REQUEST_ID, 0);
-
-				Logger.debug(TAG, "Received intent " + intent.getAction() + ", request ID "
-						+ resultRequestId);
-
-				if (resultRequestId == requestId) {
-
-					Logger.debug(TAG, "Result is for our request ID");
-
-					int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE,
-							0);
-
-					Logger.debug(TAG, "Result code = " + resultCode);
-
-					if (resultCode == 200) {
-						Logger.debug(TAG, "Updating UI with new data");
-					}
-				} else {
-					Logger.debug(TAG, "Result is NOT for our request ID");
-				}
-
-			}
-		};
-
 		mCatPicturesServiceHelper = CatPicturesServiceHelper.getInstance(this);
-
-		this.registerReceiver(requestReceiver, filter);
 
 		if (requestId == null) {
 			requestId = mCatPicturesServiceHelper.getCatPictures();
-			// show spinner
+			// show progress spinner
 		} else if (mCatPicturesServiceHelper.isRequestPending(requestId)) {
-			// show spinner
-		} 
+			// show progress spinner
+		} else {
+			// stop progress spinner, request already received, data updated
+		}
 
 	}
 
@@ -119,12 +84,49 @@ public class CatPicturesActivity extends ListActivity {
 		super.onPause();
 
 		// Unregister for broadcast
-		if (requestReceiver != null) {
-			try {
-				this.unregisterReceiver(requestReceiver);
-			} catch (IllegalArgumentException e) {
-				Logger.error(TAG, e.getLocalizedMessage(), e);
+		try {
+			this.unregisterReceiver(requestReceiver);
+		} catch (IllegalArgumentException e) {
+			Logger.warn(TAG, "Likely receiver wasn't registered, ok to ignore");
+		}
+	}
+
+	class CatPicturesReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			// Returns the id of original request
+			long resultRequestId = intent.getLongExtra(
+					CatPicturesServiceHelper.EXTRA_REQUEST_ID, 0);
+
+			Logger.debug(TAG, "Received intent " + intent.getAction() + ", request ID "
+					+ resultRequestId);
+			
+			// check if this was OUR request
+			if (resultRequestId == requestId) {
+				
+				// This was our request, stop the progress spinner
+				// TODO
+				Logger.debug(TAG, "Result is for our request ID");
+
+				// What was the result of our request?
+				int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE,
+						0);
+
+				Logger.debug(TAG, "Result code = " + resultCode);
+
+				// HERE WE COULD GIVE SOME FEEDBACK TO USER INDICATING IF DATA HAS BEEN UPDATED
+				// OR IF AN ERROR HAS OCCURED
+				if (resultCode == 200) {
+					Logger.info(TAG, "Request Succeeded");
+				} else {
+					Logger.warn(TAG, "Error executing request:" + resultCode);					
+				}
+			} else {
+				// IGNORE, wasn't for our request
+				Logger.debug(TAG, "Result is NOT for our request ID");
 			}
+
 		}
 	}
 
