@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
-public class RestClientImpl implements RestClient {
+public class DefaultRestClient implements RestClient {
 
 	/* (non-Javadoc)
 	 * @see mn.aug.restfulandroid.rest.IRestClient#execute(mn.aug.restfulandroid.rest.Request)

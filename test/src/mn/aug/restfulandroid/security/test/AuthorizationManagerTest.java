@@ -7,7 +7,7 @@ import android.test.AndroidTestCase;
 import mn.aug.restfulandroid.rest.RestClient;
 import mn.aug.restfulandroid.rest.Request;
 import mn.aug.restfulandroid.rest.Response;
-import mn.aug.restfulandroid.rest.RestClientImpl;
+import mn.aug.restfulandroid.rest.DefaultRestClient;
 import mn.aug.restfulandroid.rest.RestMethodFactory.Method;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.security.RequestSigner;
@@ -31,7 +31,7 @@ public class AuthorizationManagerTest extends AndroidTestCase {
 		RequestSigner signer = AuthorizationManager.getInstance(getContext());
 		signer.authorize(request);
 
-		RestClient client = new RestClientImpl();
+		RestClient client = new DefaultRestClient();
 		Response response = client.execute(request);
 		assertTrue(response.status == 200);
 

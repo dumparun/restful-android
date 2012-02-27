@@ -20,13 +20,13 @@ public class MockCatPicturesService extends IntentService implements CatPictures
 
 	private Intent mOriginalRequestIntent;
 	
-	private static Semaphore mOnHandleIntentSemaphone;
+	private static Semaphore mOnHandleIntentSemaphore;
 
 	private static int mResultCode = HttpStatus.SC_OK;
 
 	public MockCatPicturesService() {
 		super("CatPicturesService");
-		mOnHandleIntentSemaphone = new Semaphore(0);
+		mOnHandleIntentSemaphore = new Semaphore(0);
 	}
 	
 	public static void setResultCode(int resultCode) {
@@ -49,7 +49,7 @@ public class MockCatPicturesService extends IntentService implements CatPictures
 			if (method.equalsIgnoreCase(METHOD_GET)) {
 				// fake request
 				try {
-					mOnHandleIntentSemaphone.acquire();
+					mOnHandleIntentSemaphore.acquire();
 				} catch (InterruptedException e) {}
 				makeCatPicturesProcessorCallback().send(mResultCode);
 			} else {
@@ -85,7 +85,7 @@ public class MockCatPicturesService extends IntentService implements CatPictures
 	}
 	
 	public static void releaseOnHandleIntent() {
-		mOnHandleIntentSemaphone.release();
+		mOnHandleIntentSemaphore.release();
 	}
 
 }

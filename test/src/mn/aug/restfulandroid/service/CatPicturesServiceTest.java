@@ -2,7 +2,6 @@ package mn.aug.restfulandroid.service;
 
 import java.util.UUID;
 
-import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.mock.MockCatPicturesProcessor;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +18,11 @@ public class CatPicturesServiceTest extends InstrumentationTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		RestfulAndroid.setCatPicturesProcessorClass(MockCatPicturesProcessor.class);
+
+		CatPicturesProcessorFactory processorFactory = CatPicturesProcessorFactory
+				.getInstance(getInstrumentation().getContext());
+		processorFactory.setDefaultProcessor(new MockCatPicturesProcessor(getInstrumentation()
+				.getContext()));
 	}
 
 	public void testOnHandleIntent() throws Exception {

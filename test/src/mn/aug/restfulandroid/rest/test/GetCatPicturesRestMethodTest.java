@@ -2,7 +2,6 @@ package mn.aug.restfulandroid.rest.test;
 
 import java.util.List;
 
-import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.TestUtil;
 import mn.aug.restfulandroid.mock.MockRestClient;
 import mn.aug.restfulandroid.rest.Response;
@@ -24,15 +23,10 @@ public class GetCatPicturesRestMethodTest extends InstrumentationTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		mRestClient = new MockRestClient();
-		RestfulAndroid.setRestClient(mRestClient);
 		mGetCatPicturesRestMethod = new GetCatPicturesRestMethod(getInstrumentation().getContext(),
 				null);
-	}
-
-	protected void tearDown() throws Exception {
-		RestfulAndroid.reset();
-		super.tearDown();
+		mRestClient = new MockRestClient();
+		mGetCatPicturesRestMethod.setRestClient(mRestClient);
 	}
 
 	public void testExecute() throws Exception {

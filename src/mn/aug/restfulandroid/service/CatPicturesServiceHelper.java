@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import mn.aug.restfulandroid.RestfulAndroid;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,46 +25,16 @@ public class CatPicturesServiceHelper {
 
 	private static final String catPicturesHashKey = "CAT_PICTURES";
 
-	private static Object lock = new Object();
-
-	private static CatPicturesServiceHelper instance;
-
 	// TODO: refactor the key
 	private Map<String, Long> pendingRequests = new HashMap<String, Long>();
 	private Context mAppContext;
 
-	/* Class implementing CatPicturesService */
-	private Class<? extends CatPicturesService> serviceClass;
+	private Class<? extends CatPicturesService> mCatPicturesServiceClass;
 
-	private CatPicturesServiceHelper(Context context) {
+	public CatPicturesServiceHelper(Context context) {
 		this.mAppContext = context.getApplicationContext();
 
-		serviceClass = RestfulAndroid.getCatPicturesServiceClass();
-	}
-
-	/**
-	 * Clears the singleton instance of CatPicturesServiceHelper, allowing it to
-	 * be re-initialized on getInstance(Context).
-	 */
-	public static void clearInstance() {
-		instance = null;
-	}
-
-	/**
-	 * Get the singleton instance of {@link CatPicturesServiceHelper}.
-	 * 
-	 * @param ctx
-	 *            a valid Context
-	 * @return singleton instance of {@link CatPicturesServiceHelper}.
-	 */
-	public static CatPicturesServiceHelper getInstance(Context ctx) {
-		synchronized (lock) {
-			if (instance == null) {
-				instance = new CatPicturesServiceHelper(ctx);
-			}
-		}
-
-		return instance;
+		mCatPicturesServiceClass = DefaultCatPicturesService.class;
 	}
 
 	/**
@@ -86,7 +54,7 @@ public class CatPicturesServiceHelper {
 			}
 		};
 
-		Intent intent = new Intent(this.mAppContext, serviceClass);
+		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
 		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_GET);
 		intent.putExtra(CatPicturesService.RESOURCE_TYPE_EXTRA,
 				CatPicturesService.RESOURCE_TYPE_CAT_PICTURES);
@@ -96,6 +64,10 @@ public class CatPicturesServiceHelper {
 		this.mAppContext.startService(intent);
 
 		return requestId;
+	}
+	
+	public void setCatPicturesServiceClass(Class<? extends CatPicturesService> service) {
+		mCatPicturesServiceClass = service;
 	}
 
 	private long generateRequestID() {

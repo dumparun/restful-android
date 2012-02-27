@@ -21,35 +21,31 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 
 	private long originalRequestId;
 	private TestContext mTestContext;
+	private CatPicturesServiceHelper mCatPicturesServiceHelper;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		mTestContext = new TestContext(getInstrumentation().getContext());
-		RestfulAndroid.setCatPicturesServiceClass(MockCatPicturesService.class);
+		mCatPicturesServiceHelper = new CatPicturesServiceHelper(mTestContext);
 	}
-
+	
 	@Override
 	protected void tearDown() throws Exception {
-		/*
-		 * The test context will be newly instantiated for each test. To ensure
-		 * the CatPicturesServiceHelper gets the new context, we need to clear
-		 * it's instance, allowing it to re-initialize for each test
-		 */
-		CatPicturesServiceHelper.clearInstance();
+		mTestContext = null;
 		super.tearDown();
 	}
 
-	public void testGetInstance() {
-		assertNotNull(CatPicturesServiceHelper.getInstance(mTestContext));
+	public void testPreconditions() {
+		assertNotNull(mCatPicturesServiceHelper);
 	}
 
 	public void testGetCatPictures() throws InterruptedException {
 
 		MockCatPicturesService.setResultCode(HttpStatus.SC_OK);
 
-		CatPicturesServiceHelper helper = CatPicturesServiceHelper.getInstance(mTestContext);
-		originalRequestId = helper.getCatPictures();
+		mCatPicturesServiceHelper.setCatPicturesServiceClass(MockCatPicturesService.class);
+		originalRequestId = mCatPicturesServiceHelper.getCatPictures();
 
 		/*
 		 * The implementation of CatPicturesServiceHelper.getCatPictures() will
@@ -106,8 +102,8 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 
 		MockCatPicturesService.setResultCode(HttpStatus.SC_OK);
 
-		CatPicturesServiceHelper helper = CatPicturesServiceHelper.getInstance(mTestContext);
-		originalRequestId = helper.getCatPictures();
+		mCatPicturesServiceHelper.setCatPicturesServiceClass(MockCatPicturesService.class);
+		originalRequestId = mCatPicturesServiceHelper.getCatPictures();
 
 		Intent intent = mTestContext.getStartServiceIntents().get(0);
 		assertNotNull(intent);
@@ -127,7 +123,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 		 * Verify the request is pending before releasing mock service to make
 		 * the callback
 		 */
-		assertTrue(helper.isRequestPending(originalRequestId));
+		assertTrue(mCatPicturesServiceHelper.isRequestPending(originalRequestId));
 
 		MockCatPicturesService.releaseOnHandleIntent();
 		Thread.sleep(500);
@@ -139,7 +135,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 		assertTrue(broadcastIntent.getLongExtra(CatPicturesServiceHelper.EXTRA_REQUEST_ID, 0) == originalRequestId);
 		assertTrue(broadcastIntent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE, 0) == HttpStatus.SC_OK);
 
-		assertFalse(helper.isRequestPending(originalRequestId));
+		assertFalse(mCatPicturesServiceHelper.isRequestPending(originalRequestId));
 	}
 
 }

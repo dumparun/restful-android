@@ -1,6 +1,5 @@
 package mn.aug.restfulandroid.service;
 
-import mn.aug.restfulandroid.RestfulAndroid;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,8 +31,9 @@ public class DefaultCatPicturesService extends IntentService implements CatPictu
 		case RESOURCE_TYPE_CAT_PICTURES:
 
 			if (method.equalsIgnoreCase(METHOD_GET)) {
-				CatPicturesProcessor processor = RestfulAndroid.getCatPicturesProcessor(getApplicationContext());
-				processor.getCatPictures(makeCatPicturesProcessorCallback());
+				CatPicturesProcessorFactory processorFactory = CatPicturesProcessorFactory.getInstance(this);
+				CatPicturesProcessor catPicturesProcessor = processorFactory.getProcessor();
+				catPicturesProcessor.getCatPictures(makeCatPicturesProcessorCallback());
 			} else {
 				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
 			}

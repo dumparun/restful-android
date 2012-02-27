@@ -72,7 +72,7 @@ public class CatPicturesActivity extends ListActivity {
 		 * a. If not, make the request
 		 * b. If so, check if it is still in progress or was completed while we were paused
 		 */
-		mCatPicturesServiceHelper = CatPicturesServiceHelper.getInstance(this);
+		mCatPicturesServiceHelper = new CatPicturesServiceHelper(this);
 
 		if (requestId == null) {
 			requestId = mCatPicturesServiceHelper.getCatPictures();

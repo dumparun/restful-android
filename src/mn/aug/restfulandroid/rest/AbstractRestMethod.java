@@ -3,7 +3,6 @@ package mn.aug.restfulandroid.rest;
 import java.util.List;
 import java.util.Map;
 
-import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.rest.resource.Resource;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.security.RequestSigner;
@@ -13,6 +12,7 @@ import android.content.Context;
 public abstract class AbstractRestMethod<T extends Resource> implements RestMethod<T> {
 
 	private static final String DEFAULT_ENCODING = "UTF-8";
+	private RestClient mRestClient;
 
 	public RestMethodResult<T> execute() {
 
@@ -23,6 +23,10 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		}
 		Response response = doRequest(request);
 		return buildResult(response);
+	}
+	
+	public void setRestClient(RestClient client) {
+		mRestClient = client;
 	}
 
 	protected abstract Context getContext();
@@ -81,9 +85,12 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 
 	private Response doRequest(Request request) {
 
-		RestClient client = RestfulAndroid.getRestClient();
+		if (mRestClient == null) {
+			mRestClient = new DefaultRestClient();
+		}
+		
 		logRequest(request);
-		return client.execute(request);
+		return mRestClient.execute(request);
 	}
 
 	private String getCharacterEncoding(Map<String, List<String>> headers) {
