@@ -30,6 +30,9 @@ import android.widget.TextView;
 
 public class CatPicsCursorAdapter extends CursorAdapter {
 
+	private static String DEFAULT_THUMBNAIL_URL = "default";
+	private static String SELF_THUMBNAIL_URL = "self";
+
 	private RestfulAndroid app;
 
 	public CatPicsCursorAdapter(Context context, Cursor c) {
@@ -43,14 +46,19 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 		String title = cursor.getString(cursor.getColumnIndex(CatPicturesTable.TITLE));
 		String author = cursor.getString(cursor.getColumnIndex(CatPicturesTable.AUTHOR));
 		String thumbnailUrl = cursor.getString(cursor.getColumnIndex(CatPicturesTable.THUMBNAIL));
-		File thumbnail = getLocalThumbnailFile(thumbnailUrl);
 
-		Log.d("Adapter","Row[" + title + ":" + author);
+		Log.d("Adapter","Row[" + title + ":" + author + ":" + thumbnailUrl +"]");
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.titleView.setText(title);	
 		holder.authorView.setText(author);	
-		holder.thumbView.setImageURI(Uri.parse(thumbnail.getPath()));
 
+		// not all entries have valie thumbnail urls
+		if(thumbnailUrl != null 
+				&& !DEFAULT_THUMBNAIL_URL.equals(thumbnailUrl)
+				&& !SELF_THUMBNAIL_URL.equals(thumbnailUrl)){
+			File thumbnail = getLocalThumbnailFile(thumbnailUrl);
+			holder.thumbView.setImageURI(Uri.parse(thumbnail.getPath()));
+		}
 	}
 
 	@Override
@@ -88,7 +96,7 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 		ImageView thumbView;
 	}
 
-	class ThumbnailDownloadTask extends AsyncTask<Uri, Void, Void>{
+	class ThumbnailDownloadTask extends AsyncTask<Uri, Void, Boolean>{
 
 		private File thumbDir;
 
@@ -97,24 +105,27 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
-			CatPicsCursorAdapter.this.notifyDataSetChanged();
+		protected void onPostExecute(Boolean loaded) {
+			if(loaded){
+				CatPicsCursorAdapter.this.notifyDataSetChanged();
+			}
 		}
 
 
 
 		@Override
-		protected Void doInBackground(Uri... params) {
-			
+		protected Boolean doInBackground(Uri... params) {
+
 			HttpURLConnection urlConnection = null;
 			OutputStream os = null;
 			InputStream in = null;
-			
+			boolean loaded = false;
+
 			try {
 				if(!this.thumbDir.exists()){
 					this.thumbDir.mkdirs();
 				}
-				
+
 				URL thumbUrl = new URL(params[0].toString());
 				String filename = params[0].getLastPathSegment();
 
@@ -126,28 +137,33 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 
 				byte[] b = new byte[2048];
 				int count;
-				
+
 				while ((count = in.read(b)) > 0) {
 					os.write(b, 0, count);
 				}
-			
 
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+				loaded = true;
 
-		}finally {
-			try {
-				in.close();
-				os.close();
-			} catch (IOException e) {
+			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+
+			}finally {
+				try {
+					if(in != null){
+						in.close();
+					}
+					if(os != null){
+						os.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			return loaded;
 		}
-		return null;
 	}
-}
 }
