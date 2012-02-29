@@ -45,7 +45,9 @@ public class CatPicturesActivity extends ListActivity {
 
 		// GET EXISTING PICTURES TO INIT LIST
 		Cursor cursor = getContentResolver().query(CatPictures.CONTENT_URI,
-				CatPicturesTable.DISPLAY_COLUMNS, null, null, null);
+				CatPicturesTable.DISPLAY_COLUMNS, null, null,
+				CatPicturesTable.CREATED + " DESC");
+		
 		startManagingCursor(cursor);
 
 		// CREATE THE ADAPTER USING THE CURSOR
