@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="RESTfulAndroidTheme" parent="@android:style/Theme">
+    <style name="RESTfulAndroidTheme" parent="@android:style/Theme.Light">
         <item name="android:windowTitleSize">40dip</item>
         <item name="android:windowTitleBackgroundStyle">@style/TitlebarBackgroundStyle</item>
     </style>
