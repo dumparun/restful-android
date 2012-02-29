@@ -10,6 +10,7 @@ import android.content.ContentValues;
 public class CatPicture implements Resource {
 
 	private String id;
+	private long created;
 	private String title;
 	private String url;
 	private String author;
@@ -29,6 +30,7 @@ public class CatPicture implements Resource {
 		this.url = JSONUtil.getString(json, "url");
 		this.author = JSONUtil.getString(json, "author");
 		this.thumbnail = JSONUtil.getString(json, "thumbnail");
+		this.created = JSONUtil.getLong(json, "created");
 	}
 
 	public String getId() {
@@ -50,6 +52,10 @@ public class CatPicture implements Resource {
 	public String getThumbnail() {
 		return thumbnail;
 	}
+	
+	public long getCreated() {
+		return created;
+	}
 
 	public ContentValues toContentValues() {
 		ContentValues rowData = new ContentValues();
@@ -58,6 +64,7 @@ public class CatPicture implements Resource {
 		rowData.put(CatPicturesTable.URL, this.url);
 		rowData.put(CatPicturesTable.AUTHOR, this.author);
 		rowData.put(CatPicturesTable.THUMBNAIL, this.thumbnail);
+		rowData.put(CatPicturesTable.CREATED, this.created);
 		
 		return rowData;
 	}
