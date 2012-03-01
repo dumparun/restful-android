@@ -45,7 +45,7 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 
 		String title = cursor.getString(cursor.getColumnIndex(CatPicturesTable.TITLE));
 		String author = cursor.getString(cursor.getColumnIndex(CatPicturesTable.AUTHOR));
-		String thumbnailUrl = cursor.getString(cursor.getColumnIndex(CatPicturesTable.THUMBNAIL));
+		String thumbnailUrl = cursor.getString(cursor.getColumnIndex(CatPicturesTable.THUMBNAIL_URL));
 
 		Log.d("Adapter","Row[" + title + ":" + author + ":" + thumbnailUrl +"]");
 		ViewHolder holder = (ViewHolder) view.getTag();

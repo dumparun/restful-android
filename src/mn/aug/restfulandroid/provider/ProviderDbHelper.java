@@ -16,7 +16,7 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 
 	// Name of the database file
 	private static final String DATABASE_NAME = "restdroid.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 1;
 
 	public ProviderDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,19 +35,36 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 
 	private void createTables(SQLiteDatabase db) {
 		/* Create cat pictures table */
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
-		sqlBuilder.append(CatPicturesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-		sqlBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
-		sqlBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
-		sqlBuilder.append(CatPicturesTable.REF_ID + " TEXT, ");
-		sqlBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
-		sqlBuilder.append(CatPicturesTable.URL + " TEXT, ");
-		sqlBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
-		sqlBuilder.append(CatPicturesTable.THUMBNAIL + " TEXT, ");
-		sqlBuilder.append(CatPicturesTable.CREATED + " INTEGER");
-		sqlBuilder.append(");");
-		String sql = sqlBuilder.toString();
+		StringBuilder catPicsBuilder = new StringBuilder();
+		catPicsBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
+		catPicsBuilder.append(CatPicturesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
+		catPicsBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
+		catPicsBuilder.append(CatPicturesTable.REF_ID + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable.URL + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable.THUMBNAIL_URL + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable.CREATED + " INTEGER");
+		catPicsBuilder.append(");");
+		String sql = catPicsBuilder.toString();
+		Log.i(TAG, "Creating DB table with string: '" + sql + "'");
+		db.execSQL(sql);
+		
+		/* Comments Table */
+		StringBuilder commentsBuilder = new StringBuilder();
+		commentsBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
+		commentsBuilder.append(CatPicturesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
+		commentsBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
+		commentsBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
+		commentsBuilder.append(CatPicturesTable.REF_ID + " TEXT, ");
+		commentsBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
+		commentsBuilder.append(CatPicturesTable.URL + " TEXT, ");
+		commentsBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
+		commentsBuilder.append(CatPicturesTable.THUMBNAIL_URL + " TEXT, ");
+		commentsBuilder.append(CatPicturesTable.CREATED + " INTEGER");
+		commentsBuilder.append(");");
+		sql = commentsBuilder.toString();
 		Log.i(TAG, "Creating DB table with string: '" + sql + "'");
 		db.execSQL(sql);
 	}

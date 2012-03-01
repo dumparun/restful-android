@@ -14,7 +14,8 @@ public class CatPicture implements Resource {
 	private String title;
 	private String url;
 	private String author;
-	private String thumbnail;
+	private String thumbnailUrl;
+	private String commentsUrl;
 
 	/**
 	 * Construct for a CatPicture from its JSON representation
@@ -29,8 +30,9 @@ public class CatPicture implements Resource {
 		this.title = JSONUtil.getString(json, "title");
 		this.url = JSONUtil.getString(json, "url");
 		this.author = JSONUtil.getString(json, "author");
-		this.thumbnail = JSONUtil.getString(json, "thumbnail");
-		this.created = JSONUtil.getLong(json, "created");
+		this.thumbnailUrl = JSONUtil.getString(json, "thumbnail");
+		this.commentsUrl = JSONUtil.getString(json, "permalink");
+        this.created = JSONUtil.getLong(json, "created");
 	}
 
 	public String getId() {
@@ -49,8 +51,12 @@ public class CatPicture implements Resource {
 		return author;
 	}
 
-	public String getThumbnail() {
-		return thumbnail;
+	public String getThumbnailUrl() {
+		return thumbnailUrl;
+	}
+	
+	public String getCommentsUrl() {
+		return commentsUrl;
 	}
 	
 	public long getCreated() {
@@ -63,8 +69,9 @@ public class CatPicture implements Resource {
 		rowData.put(CatPicturesTable.TITLE, this.title);
 		rowData.put(CatPicturesTable.URL, this.url);
 		rowData.put(CatPicturesTable.AUTHOR, this.author);
-		rowData.put(CatPicturesTable.THUMBNAIL, this.thumbnail);
-		rowData.put(CatPicturesTable.CREATED, this.created);
+		rowData.put(CatPicturesTable.THUMBNAIL_URL, this.thumbnailUrl);
+		rowData.put(CatPicturesTable.COMMENTS_URL, this.commentsUrl);
+        rowData.put(CatPicturesTable.CREATED, this.created);
 		
 		return rowData;
 	}
