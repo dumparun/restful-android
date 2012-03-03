@@ -38,6 +38,15 @@ public class DefaultCatPicturesService extends IntentService implements CatPictu
 				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
 			}
 			break;
+			
+		case RESOURCE_TYPE_COMMENTS:
+
+			if (method.equalsIgnoreCase(METHOD_GET)) {
+				// TODO Add hooks to processor once its complete
+			} else {
+				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
+			}
+			break;
 
 		default:
 			mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
