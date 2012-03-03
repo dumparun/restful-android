@@ -5,5 +5,7 @@
     <string name="app_log_tag">RESTfulAndroid</string>
     <string name="button_login_label">Login to Twitter</string>
     <string name="error_occurred">An error has occurred.</string>
+    <string name="comment_hint">Post a new comment</string>
+    <string name="button_comment">Post</string>
 
 </resources>

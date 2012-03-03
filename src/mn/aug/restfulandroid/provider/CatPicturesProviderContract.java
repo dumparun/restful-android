@@ -158,6 +158,7 @@ public final class CatPicturesProviderContract {
 						CommentsTable._STATUS,
 						CommentsTable._RESULT,
 						CommentsTable.REF_ID,
+						CommentsTable.CAT_PICTURE_ID,
 						CommentsTable.AUTHOR,
 						CommentsTable.COMMENT_TEXT,
 						CommentsTable.CREATED
@@ -177,6 +178,14 @@ public final class CatPicturesProviderContract {
 			 * </P>
 			 */
 			public static final String REF_ID = "ref_id";
+			
+			/**
+			 * Column name for the foreign-key to the CatPicturesTable
+			 * <P>
+			 * Type: TEXT
+			 * </P>
+			 */
+			public static final String CAT_PICTURE_ID = "cat_pic_id";
 
 			/**
 			 * Column name for comment text

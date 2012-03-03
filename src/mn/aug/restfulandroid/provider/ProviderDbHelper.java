@@ -1,6 +1,7 @@
 package mn.aug.restfulandroid.provider;
 
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -53,15 +54,14 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 		
 		/* Comments Table */
 		StringBuilder commentsBuilder = new StringBuilder();
-		commentsBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
-		commentsBuilder.append(CatPicturesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-		commentsBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
-		commentsBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
-		commentsBuilder.append(CatPicturesTable.REF_ID + " TEXT, ");
-		commentsBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
-		commentsBuilder.append(CatPicturesTable.URL + " TEXT, ");
+		commentsBuilder.append("CREATE TABLE " + CommentsTable.TABLE_NAME + " (");
+		commentsBuilder.append(CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
+		commentsBuilder.append(CommentsTable._STATUS + " TEXT, ");
+		commentsBuilder.append(CommentsTable._RESULT + " INTEGER, ");
+		commentsBuilder.append(CommentsTable.REF_ID + " TEXT, ");
+		commentsBuilder.append(CommentsTable.CAT_PICTURE_ID + " TEXT, ");
+		commentsBuilder.append(CommentsTable.COMMENT_TEXT + " TEXT, ");
 		commentsBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
-		commentsBuilder.append(CatPicturesTable.THUMBNAIL_URL + " TEXT, ");
 		commentsBuilder.append(CatPicturesTable.CREATED + " INTEGER");
 		commentsBuilder.append(");");
 		sql = commentsBuilder.toString();
