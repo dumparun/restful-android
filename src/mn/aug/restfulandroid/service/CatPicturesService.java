@@ -14,7 +14,8 @@ public interface CatPicturesService {
 	public static final int RESOURCE_TYPE_COMMENTS = 2;
 
 	public static final String METHOD_GET = Method.GET.toString();
+	public static final String METHOD_POST = Method.POST.toString();
 
-	CatPicturesProcessorCallback makeCatPicturesProcessorCallback();
+	ResourceProcessorCallback makeCatPicturesProcessorCallback();
 
 }

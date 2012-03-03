@@ -7,13 +7,13 @@ import android.content.Context;
 public class CatPicturesProcessorFactory {
 
 	private static CatPicturesProcessorFactory mSingleton;
-	private CatPicturesProcessor mProcessor;
+	private ResourceProcessor mProcessor;
 
-	public void setDefaultProcessor(CatPicturesProcessor processor) {
+	public void setDefaultProcessor(ResourceProcessor processor) {
 		mProcessor = processor;
 	}
 
-	public CatPicturesProcessor getProcessor() {
+	public ResourceProcessor getProcessor() {
 		return mProcessor;
 	}
 
@@ -25,7 +25,7 @@ public class CatPicturesProcessorFactory {
 	}
 	
 	private CatPicturesProcessorFactory(Context context) {
-		mProcessor = new DefaultCatPicturesProcessor(context);
+		mProcessor = new CatPicturesProcessor(context);
 	};
 
 }

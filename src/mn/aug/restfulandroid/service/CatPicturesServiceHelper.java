@@ -1,6 +1,8 @@
 package mn.aug.restfulandroid.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -9,6 +11,7 @@ import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ResultReceiver;
 
 /**
@@ -25,19 +28,17 @@ public class CatPicturesServiceHelper {
 	public static String EXTRA_REQUEST_ID = "EXTRA_REQUEST_ID";
 	public static String EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE";
 
-	private static final String catPicturesHashKey = "CAT_PICTURES";
-	private static final String commentsHashKey = "CAT_PICTURES::";
-
-	// TODO: refactor the key
-	private Map<String, Long> pendingRequests = new HashMap<String, Long>();
+	private List<Long> pendingRequests = new ArrayList<Long>();
+	private Object pendingRequestsLock = new Object();
 	private Context mAppContext;
+	private ServiceResultReceiver serviceCallback;
 
 	private Class<? extends CatPicturesService> mCatPicturesServiceClass;
 
 	public CatPicturesServiceHelper(Context context) {
 		this.mAppContext = context.getApplicationContext();
-
-		mCatPicturesServiceClass = DefaultCatPicturesService.class;
+		this.serviceCallback = new ServiceResultReceiver();
+		this.mCatPicturesServiceClass = DefaultCatPicturesService.class;
 	}
 
 	/**
@@ -48,14 +49,10 @@ public class CatPicturesServiceHelper {
 	public long getCatPictures() {
 
 		long requestId = generateRequestID();
-		pendingRequests.put(catPicturesHashKey, requestId);
+		synchronized (pendingRequestsLock) {			
+			pendingRequests.add(requestId);
+		}
 
-		ResultReceiver serviceCallback = new ResultReceiver(null) {
-			@Override
-			protected void onReceiveResult(int resultCode, Bundle resultData) {
-				handleGetCatPicturesResult(resultCode, resultData);
-			}
-		};
 
 		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
 		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_GET);
@@ -68,7 +65,7 @@ public class CatPicturesServiceHelper {
 
 		return requestId;
 	}
-	
+
 	/**
 	 * Initiates a request to get cat pictures via the CatPicturesService
 	 * 
@@ -77,14 +74,9 @@ public class CatPicturesServiceHelper {
 	public long getComments(String catPictureId) {
 
 		long requestId = generateRequestID();
-		pendingRequests.put(commentsHashKey + catPictureId, requestId);
-
-		ResultReceiver serviceCallback = new ResultReceiver(null) {
-			@Override
-			protected void onReceiveResult(int resultCode, Bundle resultData) {
-				handleGetCommentsResult(resultCode, resultData);
-			}
-		};
+		synchronized (pendingRequestsLock) {			
+			pendingRequests.add(requestId);
+		}
 
 		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
 		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_GET);
@@ -92,7 +84,7 @@ public class CatPicturesServiceHelper {
 				CatPicturesService.RESOURCE_TYPE_COMMENTS);
 		intent.putExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA, serviceCallback);
 		intent.putExtra(EXTRA_REQUEST_ID, requestId);
-		
+
 		Bundle requestParams = new Bundle();
 		requestParams.putString(CommentsTable.CAT_PICTURE_ID, catPictureId);
 		intent.putExtra(CatPicturesService.EXTRA_REQUEST_PARAMETERS, requestParams);
@@ -101,7 +93,37 @@ public class CatPicturesServiceHelper {
 
 		return requestId;
 	}
-	
+
+	/**
+	 * Submit a new comment for the cat picture
+	 * @param catPictureId
+	 * @param comment
+	 */
+	public long submitNewComment(String catPictureId, String comment) {
+		long requestId = generateRequestID();
+		synchronized (pendingRequestsLock) {			
+			pendingRequests.add(requestId);
+		}
+
+		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
+		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_POST);
+		intent.putExtra(CatPicturesService.RESOURCE_TYPE_EXTRA,
+				CatPicturesService.RESOURCE_TYPE_COMMENTS);
+		intent.putExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA, serviceCallback);
+		intent.putExtra(EXTRA_REQUEST_ID, requestId);
+
+		Bundle requestParams = new Bundle();
+		requestParams.putString(CommentsTable.CAT_PICTURE_ID, catPictureId);
+		requestParams.putString(CommentsTable.COMMENT_TEXT, comment);
+		intent.putExtra(CatPicturesService.EXTRA_REQUEST_PARAMETERS, requestParams);
+
+		this.mAppContext.startService(intent);
+
+		return requestId;
+
+	}
+
+
 	public void setCatPicturesServiceClass(Class<? extends CatPicturesService> service) {
 		mCatPicturesServiceClass = service;
 	}
@@ -120,8 +142,11 @@ public class CatPicturesServiceHelper {
 	 *         otherwise
 	 */
 	public boolean isRequestPending(long requestId) {
-		return this.pendingRequests.containsValue(requestId);
+		synchronized (pendingRequestsLock) {			
+			return this.pendingRequests.contains(requestId);
+		}
 	}
+
 
 	/**
 	 * Handles the result code and data during a callback from
@@ -132,54 +157,31 @@ public class CatPicturesServiceHelper {
 	 * @param resultData
 	 *            the data
 	 */
-	private void handleGetCatPicturesResult(int resultCode, Bundle resultData) {
+	class ServiceResultReceiver extends ResultReceiver {
 
-		Intent origIntent = (Intent) resultData
-				.getParcelable(CatPicturesService.ORIGINAL_INTENT_EXTRA);
 
-		if (origIntent != null) {
-			long requestId = origIntent.getLongExtra(EXTRA_REQUEST_ID, 0);
-
-			pendingRequests.remove(catPicturesHashKey);
-
-			Intent resultBroadcast = new Intent(ACTION_REQUEST_RESULT);
-			resultBroadcast.putExtra(EXTRA_REQUEST_ID, requestId);
-			resultBroadcast.putExtra(EXTRA_RESULT_CODE, resultCode);
-
-			mAppContext.sendBroadcast(resultBroadcast);
+		public ServiceResultReceiver() {
+			super(null);
 		}
-	}
-	
-	/**
-	 * Handles the result code and data during a callback from
-	 * CatPicturesService
-	 * 
-	 * @param resultCode
-	 *            the result code
-	 * @param resultData
-	 *            the data
-	 */
-	private void handleGetCommentsResult(int resultCode, Bundle resultData) {
 
-		Intent origIntent = (Intent) resultData
-				.getParcelable(CatPicturesService.ORIGINAL_INTENT_EXTRA);
+		@Override
+		protected void onReceiveResult(int resultCode, Bundle resultData) {
+			Intent origIntent = (Intent) resultData
+					.getParcelable(CatPicturesService.ORIGINAL_INTENT_EXTRA);
 
-		if (origIntent != null) {
-			long requestId = origIntent.getLongExtra(EXTRA_REQUEST_ID, 0);
-			
-			// Retrieve the CatPicId that was used to retrieve the comments
-			// Used to build the hashkey
-			Bundle requestParams = origIntent.getBundleExtra(CatPicturesService.EXTRA_REQUEST_PARAMETERS);
-			String catPicId = requestParams.getString(CommentsTable.CAT_PICTURE_ID);
-			String hashkey = commentsHashKey + catPicId;
-			pendingRequests.remove(hashkey);
+			if (origIntent != null) {
+				long requestId = origIntent.getLongExtra(EXTRA_REQUEST_ID, 0);
+				synchronized (pendingRequestsLock) {			
+					pendingRequests.remove(requestId);
+				}
 
-			Intent resultBroadcast = new Intent(ACTION_REQUEST_RESULT);
-			resultBroadcast.putExtra(EXTRA_REQUEST_ID, requestId);
-			resultBroadcast.putExtra(EXTRA_RESULT_CODE, resultCode);
+				Intent resultBroadcast = new Intent(ACTION_REQUEST_RESULT);
+				resultBroadcast.putExtra(EXTRA_REQUEST_ID, requestId);
+				resultBroadcast.putExtra(EXTRA_RESULT_CODE, resultCode);
 
-			mAppContext.sendBroadcast(resultBroadcast);
+				mAppContext.sendBroadcast(resultBroadcast);
+			}
 		}
-	}
 
+	}
 }

@@ -32,8 +32,8 @@ public class DefaultCatPicturesService extends IntentService implements CatPictu
 
 			if (method.equalsIgnoreCase(METHOD_GET)) {
 				CatPicturesProcessorFactory processorFactory = CatPicturesProcessorFactory.getInstance(this);
-				CatPicturesProcessor catPicturesProcessor = processorFactory.getProcessor();
-				catPicturesProcessor.getCatPictures(makeCatPicturesProcessorCallback());
+				ResourceProcessor catPicturesProcessor = processorFactory.getProcessor();
+				catPicturesProcessor.getResource(makeCatPicturesProcessorCallback());
 			} else {
 				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
 			}
@@ -42,6 +42,8 @@ public class DefaultCatPicturesService extends IntentService implements CatPictu
 		case RESOURCE_TYPE_COMMENTS:
 
 			if (method.equalsIgnoreCase(METHOD_GET)) {
+				// TODO Add hooks to processor once its complete
+			} else if (method.equalsIgnoreCase(METHOD_POST)){
 				// TODO Add hooks to processor once its complete
 			} else {
 				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
@@ -56,11 +58,11 @@ public class DefaultCatPicturesService extends IntentService implements CatPictu
 	}
 
 	@Override
-	public CatPicturesProcessorCallback makeCatPicturesProcessorCallback() {
-		CatPicturesProcessorCallback callback = new CatPicturesProcessorCallback() {
+	public ResourceProcessorCallback makeCatPicturesProcessorCallback() {
+		ResourceProcessorCallback callback = new ResourceProcessorCallback() {
 
 			@Override
-			public void send(int resultCode) {
+			public void send(int resultCode, String resourceId) {
 				if (mCallback != null) {
 					mCallback.send(resultCode, getOriginalIntentBundle());
 				}
