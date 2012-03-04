@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -21,7 +22,10 @@ public class CatPicturesProvider extends ContentProvider {
 	public static final String TAG = CatPicturesProvider.class.getSimpleName();
 
 	// "projection" map of all the cat pictures table columns
-	private static HashMap<String, String> timelineProjectionMap;
+	private static HashMap<String, String> catPictureProjectionMap;
+
+	// "projection" map of all the comments table columns
+	private static HashMap<String, String> commentProjectionMap;
 
 	// URI matcher for validating URIs
 	private static final UriMatcher uriMatcher;
@@ -32,18 +36,15 @@ public class CatPicturesProvider extends ContentProvider {
 	// URI matcher ID for the single cat picture ID pattern
 	private static final int MATCHER_CAT_PICTURE_ID = 2;
 
+	// URI matcher ID for the cat pictures pattern
+	private static final int MATCHER_CAT_PICTURE_COMMENTS = 3;
+
+	// URI matcher ID for the single cat picture ID pattern
+	private static final int MATCHER_CAT_PICTURE_COMMENT_ID = 4;
+
 	// Handle to our ProviderDbHelper.
 	private ProviderDbHelper dbHelper;
 
-	/**
-	 * The MIME type of a directory of cat pictures
-	 */
-	private static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.restfulandroid.catpicture";
-
-	/**
-	 * The MIME type of a single cat picture
-	 */
-	private static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.restfulandroid.catpicture";
 
 	// static 'setup' block
 	static {
@@ -56,15 +57,28 @@ public class CatPicturesProvider extends ContentProvider {
 
 		// Add a pattern to route URIs terminated with a cat picture ID
 		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY,
-				CatPicturesTable.TABLE_NAME + "/#", MATCHER_CAT_PICTURE_ID);
+				CommentsTable.TABLE_NAME + "/#", MATCHER_CAT_PICTURE_ID);
+
+		// Add a pattern to route URIs terminated with just "comments"
+		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY, CommentsTable.TABLE_NAME,
+				MATCHER_CAT_PICTURE_COMMENTS);
+
+		// Add a pattern to route URIs terminated with a comment ID
+		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY,
+				CommentsTable.TABLE_NAME + "/#", MATCHER_CAT_PICTURE_COMMENT_ID);
 
 		// Create and initialize a projection map that returns all columns,
 		// This map returns a column name for a given string. The two are
 		// usually equal, but we need this structure
 		// later, down in .query()
-		timelineProjectionMap = new HashMap<String, String>();
+		catPictureProjectionMap = new HashMap<String, String>();
 		for (String column : CatPicturesTable.ALL_COLUMNS) {
-			timelineProjectionMap.put(column, column);
+			catPictureProjectionMap.put(column, column);
+		}
+
+		commentProjectionMap = new HashMap<String, String>();
+		for (String column : CommentsTable.ALL_COLUMNS) {
+			commentProjectionMap.put(column, column);
 		}
 	}
 
@@ -78,38 +92,55 @@ public class CatPicturesProvider extends ContentProvider {
 	@Override
 	public int delete(Uri uri, String whereClause, String[] whereValues) {
 		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
-		String finalWhere;
 		int deletedRowsCount;
+		String finalWhere;
+		String tableName=null;
 
-		// Perform the delete based on URI pattern
 		db.beginTransaction();
+		// Perform the update based on the incoming URI's pattern
 		try {
 			switch (uriMatcher.match(uri)) {
+
 			case MATCHER_CAT_PICTURES:
-				/*
-				 * Delete all the cat pictures matching the where column/value
-				 * pairs
-				 */
-				deletedRowsCount = db.delete(CatPicturesTable.TABLE_NAME, whereClause, whereValues);
+				// Perform the update and return the number of rows updated.
+				tableName = CatPicturesTable.TABLE_NAME;
 				break;
 
 			case MATCHER_CAT_PICTURE_ID:
-				/* Delete the cat picture with the given ID */
-				String catPictureId = uri.getPathSegments().get(
-						CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
-				finalWhere = CatPicturesTable._ID + " = " + catPictureId;
+				tableName = CatPicturesTable.TABLE_NAME;
+				String id = uri.getPathSegments()
+						.get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
+				finalWhere = CatPicturesTable._ID + " = " + id;
+
+				// if we were passed a 'where' arg, add that to our 'finalWhere'
 				if (whereClause != null) {
 					finalWhere = finalWhere + " AND " + whereClause;
 				}
-
-				// Perform the delete.
-				deletedRowsCount = db.delete(CatPicturesTable.TABLE_NAME, finalWhere, whereValues);
 				break;
 
-			// If the incoming URI is invalid, throws an exception.
+			case MATCHER_CAT_PICTURE_COMMENTS:
+				// Perform the update and return the number of rows updated.
+				tableName = CommentsTable.TABLE_NAME;
+				break;
+
+			case MATCHER_CAT_PICTURE_COMMENT_ID:
+				tableName = CommentsTable.TABLE_NAME;
+				String commentId = uri.getPathSegments()
+						.get(CommentsTable.COMMENT_ID_PATH_POSITION);
+				finalWhere = CommentsTable._ID + " = " + commentId;
+
+				// if we were passed a 'where' arg, add that to our 'finalWhere'
+				if (whereClause != null) {
+					finalWhere = finalWhere + " AND " + whereClause;
+				}
+				break;
+
 			default:
+				// Incoming URI pattern is invalid: halt & catch fire.
 				throw new IllegalArgumentException("Unknown URI " + uri);
 			}
+
+			deletedRowsCount = db.delete(tableName, whereClause, whereValues);
 		} finally {
 			db.endTransaction();
 		}
@@ -123,10 +154,6 @@ public class CatPicturesProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues) {
-		// Validate the incoming URI.
-		if (uriMatcher.match(uri) != MATCHER_CAT_PICTURES) {
-			throw new IllegalArgumentException("Unknown URI " + uri);
-		}
 
 		ContentValues values;
 		if (initialValues != null) {
@@ -135,18 +162,44 @@ public class CatPicturesProvider extends ContentProvider {
 			throw new SQLException("ContentValues arg for .insert() is null, cannot insert row.");
 		}
 
-		long newRowId = this.dbHelper.getWritableDatabase().insert(CatPicturesTable.TABLE_NAME,
-				null, values);
+		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
 
-		if (newRowId > 0) { // if rowID is -1, it means the insert failed
-			// Build a new cat picture URI with the new cat picture's ID
-			// appended to it.
-			Uri catPictureUri = ContentUris.withAppendedId(CatPicturesTable.CONTENT_ID_URI_BASE,
-					newRowId);
-			// Notify observers that our data changed.
-			getContext().getContentResolver().notifyChange(catPictureUri, null);
-			return catPictureUri;
-		}
+		// Validate the incoming URI.
+		db.beginTransaction();
+		// Perform the update based on the incoming URI's pattern
+		String insertTable = null;
+		Uri baseUri = null;
+		try {
+			switch (uriMatcher.match(uri)) {
+
+			case MATCHER_CAT_PICTURES:
+				insertTable = CatPicturesTable.TABLE_NAME;
+				baseUri = CatPicturesTable.CONTENT_ID_URI_BASE;
+				break;
+
+			case MATCHER_CAT_PICTURE_COMMENTS:
+				insertTable = CommentsTable.TABLE_NAME;
+				baseUri = CommentsTable.CONTENT_ID_URI_BASE;
+				break;
+
+			default:
+				// Incoming URI pattern is invalid: halt & catch fire.
+				throw new IllegalArgumentException("Unknown URI " + uri);
+			}
+
+			long newRowId = db.insert(insertTable,null, values);
+
+			if (newRowId > 0) { // if rowID is -1, it means the insert failed
+				// Build a new URI with the new resource's ID
+				// appended to it.
+				Uri notifyUri = ContentUris.withAppendedId(baseUri,newRowId);
+				// Notify observers that our data changed.
+				getContext().getContentResolver().notifyChange(notifyUri, null);
+				return notifyUri;
+			}
+		} finally {
+			db.endTransaction();
+		}	
 
 		/* insert failed; halt and catch fire */
 		throw new SQLException("Failed to insert row into " + uri);
@@ -156,24 +209,42 @@ public class CatPicturesProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] selectedColumns, String whereClause,
 			String[] whereValues, String sortOrder) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		qb.setTables(CatPicturesTable.TABLE_NAME);
 
 		// Choose the projection and adjust the "where" clause based on URI
 		// pattern-matching.
 		switch (uriMatcher.match(uri)) {
 		case MATCHER_CAT_PICTURES:
-			qb.setProjectionMap(timelineProjectionMap);
+			qb.setTables(CatPicturesTable.TABLE_NAME);
+			qb.setProjectionMap(catPictureProjectionMap);
 			break;
 
-		/*
-		 * asking for a single cat picture - use the cat pictures projection,
-		 * but add a where clause to only return the one cat picture
-		 */
+			/*
+			 * asking for a single cat picture - use the cat pictures projection,
+			 * but add a where clause to only return the one cat picture
+			 */
 		case MATCHER_CAT_PICTURE_ID:
-			qb.setProjectionMap(timelineProjectionMap);
+			qb.setTables(CatPicturesTable.TABLE_NAME);
+			qb.setProjectionMap(catPictureProjectionMap);
 			// Find the cat picture ID itself in the incoming URI
-			String id = uri.getPathSegments().get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
-			qb.appendWhere(CatPicturesTable._ID + "=" + id);
+			String catPicId = uri.getPathSegments().get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
+			qb.appendWhere(CatPicturesTable._ID + "=" + catPicId);
+			break;
+
+		case MATCHER_CAT_PICTURE_COMMENTS:
+			qb.setTables(CommentsTable.TABLE_NAME);
+			qb.setProjectionMap(commentProjectionMap);
+			break;
+
+			/*
+			 * asking for a single cat picture - use the cat pictures projection,
+			 * but add a where clause to only return the one cat picture
+			 */
+		case MATCHER_CAT_PICTURE_COMMENT_ID:
+			qb.setTables(CommentsTable.TABLE_NAME);
+			qb.setProjectionMap(commentProjectionMap);
+			// Find the cat picture ID itself in the incoming URI
+			String commentId = uri.getPathSegments().get(CommentsTable.COMMENT_ID_PATH_POSITION);
+			qb.appendWhere(CommentsTable._ID + "=" + commentId);
 			break;
 
 		default:
@@ -183,7 +254,7 @@ public class CatPicturesProvider extends ContentProvider {
 		}
 
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
-		
+
 		// the two nulls here are 'grouping' and 'filtering by group'
 		Cursor cursor = qb.query(db, selectedColumns, whereClause, whereValues, null, null,
 				sortOrder);
@@ -199,6 +270,7 @@ public class CatPicturesProvider extends ContentProvider {
 		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
 		int updatedRowsCount;
 		String finalWhere;
+		String tableName=null;
 
 		db.beginTransaction();
 		// Perform the update based on the incoming URI's pattern
@@ -207,11 +279,11 @@ public class CatPicturesProvider extends ContentProvider {
 
 			case MATCHER_CAT_PICTURES:
 				// Perform the update and return the number of rows updated.
-				updatedRowsCount = db.update(CatPicturesTable.TABLE_NAME, updateValues,
-						whereClause, whereValues);
+				tableName = CatPicturesTable.TABLE_NAME;
 				break;
 
 			case MATCHER_CAT_PICTURE_ID:
+				tableName = CatPicturesTable.TABLE_NAME;
 				String id = uri.getPathSegments()
 						.get(CatPicturesTable.CAT_PICTURE_ID_PATH_POSITION);
 				finalWhere = CatPicturesTable._ID + " = " + id;
@@ -220,14 +292,32 @@ public class CatPicturesProvider extends ContentProvider {
 				if (whereClause != null) {
 					finalWhere = finalWhere + " AND " + whereClause;
 				}
-				updatedRowsCount = db.update(CatPicturesTable.TABLE_NAME, updateValues, finalWhere,
-						whereValues);
+				break;
+
+			case MATCHER_CAT_PICTURE_COMMENTS:
+				// Perform the update and return the number of rows updated.
+				tableName = CommentsTable.TABLE_NAME;
+				break;
+
+			case MATCHER_CAT_PICTURE_COMMENT_ID:
+				tableName = CommentsTable.TABLE_NAME;
+				String commentId = uri.getPathSegments()
+						.get(CommentsTable.COMMENT_ID_PATH_POSITION);
+				finalWhere = CommentsTable._ID + " = " + commentId;
+
+				// if we were passed a 'where' arg, add that to our 'finalWhere'
+				if (whereClause != null) {
+					finalWhere = finalWhere + " AND " + whereClause;
+				}
 				break;
 
 			default:
 				// Incoming URI pattern is invalid: halt & catch fire.
 				throw new IllegalArgumentException("Unknown URI " + uri);
 			}
+
+			updatedRowsCount = db.update(tableName, updateValues,
+					whereClause, whereValues);
 		} finally {
 			db.endTransaction();
 		}
@@ -287,11 +377,11 @@ public class CatPicturesProvider extends ContentProvider {
 		long newRowId = writableDb.insert(CatPicturesTable.TABLE_NAME, null, values);
 		if (newRowId == -1) { // if rowID is -1, it means the insert failed
 			throw new SQLException("Failed to insert row into " + uri); // Insert
-																		// failed:
-																		// halt
-																		// and
-																		// catch
-																		// fire.
+			// failed:
+			// halt
+			// and
+			// catch
+			// fire.
 		}
 		return newRowId;
 	}
@@ -307,9 +397,13 @@ public class CatPicturesProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case MATCHER_CAT_PICTURES:
-			return CONTENT_TYPE;
+			return "vnd.android.cursor.dir/vnd.restfulandroid.catpicture";
 		case MATCHER_CAT_PICTURE_ID:
-			return CONTENT_ITEM_TYPE;
+			return "vnd.android.cursor.item/vnd.restfulandroid.catpicture";
+		case MATCHER_CAT_PICTURE_COMMENTS:
+			return "vnd.android.cursor.dir/vnd.restfulandroid.catpicture.comment";
+		case MATCHER_CAT_PICTURE_COMMENT_ID:
+			return "vnd.android.cursor.item/vnd.restfulandroid.catpicture.comment";
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
