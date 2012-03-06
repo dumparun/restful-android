@@ -23,14 +23,17 @@ public class GetCatPicturesRestMethod extends AbstractRestMethod<CatPictures> {
 	/* The id of the most recent cat picture we have */
 	private String mNewestId;
 
+	private URI mUri;
+
 	public GetCatPicturesRestMethod(Context context, String newestId) {
 		mContext = context.getApplicationContext();
 		mNewestId = newestId;
+		mUri = buildUri();
 	}
 
 	@Override
 	protected Request buildRequest() {
-		Request request = new Request(Method.GET, buildUri(), null, null);
+		Request request = new Request(Method.GET, mUri, null, null);
 		return request;
 	}
 
@@ -65,6 +68,11 @@ public class GetCatPicturesRestMethod extends AbstractRestMethod<CatPictures> {
 	@Override
 	protected String getLogTag() {
 		return TAG;
+	}
+
+	@Override
+	protected URI getURI() {
+		return mUri;
 	}
 
 }

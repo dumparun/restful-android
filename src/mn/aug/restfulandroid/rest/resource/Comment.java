@@ -1,6 +1,5 @@
 package mn.aug.restfulandroid.rest.resource;
 
-import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.util.JSONUtil;
 
 import org.json.JSONObject;
@@ -22,6 +21,9 @@ public class Comment implements Resource {
 	 */
 	public Comment(JSONObject json) {
 
+		this.id = JSONUtil.getString(json, "id");
+		this.author = JSONUtil.getString(json, "author");
+		this.text = JSONUtil.getString(json, "body");
 	}
 
 	public String getId() {

@@ -1,5 +1,6 @@
 package mn.aug.restfulandroid.rest;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,8 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		}
 		return new RestMethodResult<T>(status, statusMsg, resource);
 	}
+	
+	protected abstract URI getURI();
 
 	/**
 	 * Returns the log tag for the class extending AbstractRestMethod

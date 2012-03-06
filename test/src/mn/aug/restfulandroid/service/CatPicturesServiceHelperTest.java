@@ -44,7 +44,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 
 		MockCatPicturesService.setResultCode(HttpStatus.SC_OK);
 
-		mCatPicturesServiceHelper.setCatPicturesServiceClass(MockCatPicturesService.class);
+//		mCatPicturesServiceHelper.setCatPicturesServiceClass(MockCatPicturesService.class);
 		originalRequestId = mCatPicturesServiceHelper.getCatPictures();
 
 		/*
@@ -78,7 +78,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 		 * Release the semaphore, allowing onHandleIntent() to proceed with the
 		 * callback.
 		 */
-		MockCatPicturesService.releaseOnHandleIntent();
+//		MockCatPicturesService.releaseOnHandleIntent();
 
 		/* Make sure the callback has time to occur */
 		Thread.sleep(500);
@@ -102,7 +102,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 
 		MockCatPicturesService.setResultCode(HttpStatus.SC_OK);
 
-		mCatPicturesServiceHelper.setCatPicturesServiceClass(MockCatPicturesService.class);
+//		mCatPicturesServiceHelper.setCatPicturesServiceClass(MockCatPicturesService.class);
 		originalRequestId = mCatPicturesServiceHelper.getCatPictures();
 
 		Intent intent = mTestContext.getStartServiceIntents().get(0);
@@ -125,7 +125,7 @@ public class CatPicturesServiceHelperTest extends InstrumentationTestCase {
 		 */
 		assertTrue(mCatPicturesServiceHelper.isRequestPending(originalRequestId));
 
-		MockCatPicturesService.releaseOnHandleIntent();
+//		MockCatPicturesService.releaseOnHandleIntent();
 		Thread.sleep(500);
 
 		Intent broadcastIntent = mTestContext.getSendBroadcastIntents().get(0);

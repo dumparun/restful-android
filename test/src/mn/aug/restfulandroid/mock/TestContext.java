@@ -58,24 +58,25 @@ public class TestContext extends MockContext {
 	@Override
 	public ComponentName startService(final Intent service) {
 
-		mStartServiceIntents.add(service);
-
-		ComponentName component = service.getComponent();
-		if (component.getClassName().equalsIgnoreCase(
-				"mn.aug.restfulandroid.mock.MockCatPicturesService")) {
-
-			final MockCatPicturesService catPicsService = new MockCatPicturesService();
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					catPicsService.onHandleIntent(service);
-				}
-			}).start();
-
-		}
-
-		return component;
+//		mStartServiceIntents.add(service);
+//
+//		ComponentName component = service.getComponent();
+//		if (component.getClassName().equalsIgnoreCase(
+//				"mn.aug.restfulandroid.mock.MockCatPicturesService")) {
+//
+//			final MockCatPicturesService catPicsService = new MockCatPicturesService();
+//			new Thread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					catPicsService.onHandleIntent(service);
+//				}
+//			}).start();
+//
+//		}
+//
+//		return component;
+		return null;
 	}
 
 	/**
