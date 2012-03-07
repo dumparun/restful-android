@@ -2,8 +2,6 @@ package mn.aug.restfulandroid.service;
 
 import android.content.Context;
 
-
-
 public class CatPicturesProcessorFactory {
 
 	private static CatPicturesProcessorFactory mSingleton;
