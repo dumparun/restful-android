@@ -192,6 +192,7 @@ public class CatPicturesProvider extends ContentProvider {
 			if (newRowId > 0) { // if rowID is -1, it means the insert failed
 				// Build a new URI with the new resource's ID
 				// appended to it.
+				db.setTransactionSuccessful();
 				Uri notifyUri = ContentUris.withAppendedId(baseUri,newRowId);
 				// Notify observers that our data changed.
 				getContext().getContentResolver().notifyChange(notifyUri, null);
