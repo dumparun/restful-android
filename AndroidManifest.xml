@@ -23,8 +23,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.AboutActivity" />
-
+        <activity android:name=".activity.CommentActivity" />
+        
         <service android:name=".service.DefaultCatPicturesService" />
 
         <provider

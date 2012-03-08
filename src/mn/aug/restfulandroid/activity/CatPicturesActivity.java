@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.ListView;
 
 public class CatPicturesActivity extends ListActivity {
 
@@ -140,5 +142,18 @@ public class CatPicturesActivity extends ListActivity {
 
 		}
 	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// TODO Auto-generated method stub
+		super.onListItemClick(l, v, position, id);
+		Cursor cursor = (Cursor)getListAdapter().getItem(position);
+		String catPicId = cursor.getString(cursor.getColumnIndex(CatPicturesTable._ID));
+		Intent comments = new Intent(this, CommentActivity.class);
+		comments.putExtra(CommentActivity.EXTRA_CAT_PICTURE_ID, catPicId);
+		startActivity(comments);
+	}
+	
+	
 
 }
