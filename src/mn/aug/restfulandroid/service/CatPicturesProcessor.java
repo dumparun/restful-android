@@ -34,7 +34,7 @@ public class CatPicturesProcessor implements ResourceProcessor {
 
 		/*
 		 * Processor is a POJO - Processor for each resource type - Processor
-		 * can handle each method on the resource that is supported.getNewestCatPictureId - Processor
+		 * can handle each method on the resource that is supported. - Processor
 		 * needs a callback (which is how the request gets back to the service)
 		 * - Processor uses a RESTMethod - created through a
 		 * RESTMethodFactory.create(parameterized) or .createGetTimeline()
@@ -45,7 +45,7 @@ public class CatPicturesProcessor implements ResourceProcessor {
 		 */
 
 		// (4) Insert-Update the ContentProvider with a status column and
-		// results columngetNewestCatPictureId
+		// results column
 		// Look at ContentProvider example, and build a content provider
 		// that tracks the necessary data.
 
