@@ -12,10 +12,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
+import java.util.Date;
 
 import mn.aug.restfulandroid.R;
 import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
+import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -46,17 +49,25 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 		String title = cursor.getString(cursor.getColumnIndex(CatPicturesTable.TITLE));
 		String author = cursor.getString(cursor.getColumnIndex(CatPicturesTable.AUTHOR));
 		String thumbnailUrl = cursor.getString(cursor.getColumnIndex(CatPicturesTable.THUMBNAIL_URL));
+		Long postDate = cursor.getLong(cursor.getColumnIndexOrThrow(CatPicturesTable.CREATED));
 
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.titleView.setText(title);	
 		holder.authorView.setText(author);	
 
-		// not all entries have valie thumbnail urls
+		// not all entries have valid thumbnail urls
 		if(thumbnailUrl != null 
 				&& !DEFAULT_THUMBNAIL_URL.equals(thumbnailUrl)
 				&& !SELF_THUMBNAIL_URL.equals(thumbnailUrl)){
 			File thumbnail = getLocalThumbnailFile(thumbnailUrl);
 			holder.thumbView.setImageURI(Uri.parse(thumbnail.getPath()));
+		}
+		
+		//show comment date
+		if(postDate != null && postDate > 0){
+			DateFormat format = android.text.format.DateFormat.getDateFormat(context);
+			CharSequence dateStr = format.format(new Date(postDate));
+			holder.dateView.setText(dateStr);
 		}
 	}
 
@@ -67,6 +78,7 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 		ViewHolder holder = new ViewHolder();
 		holder.titleView = (TextView) listItemView.findViewById(R.id.title);
 		holder.authorView = (TextView) listItemView.findViewById(R.id.author);
+		holder.dateView = (TextView) listItemView.findViewById(R.id.post_date);
 		holder.thumbView = (ImageView) listItemView.findViewById(R.id.thumbnail);
 
 		listItemView.setTag(holder);
@@ -92,6 +104,7 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 	static class ViewHolder {
 		TextView titleView;
 		TextView authorView;		
+		TextView dateView;		
 		ImageView thumbView;
 	}
 

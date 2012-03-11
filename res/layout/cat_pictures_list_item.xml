@@ -30,5 +30,14 @@
         android:layout_alignParentBottom="true"
         android:textSize="11dip"
         android:paddingTop="5dp"/>
+    
+    <TextView
+        android:id="@+id/post_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:textSize="11dip"
+        android:padding="5dp"/>
 
 </RelativeLayout>

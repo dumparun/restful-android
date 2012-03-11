@@ -46,7 +46,7 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 		catPicsBuilder.append(CatPicturesTable.URL + " TEXT, ");
 		catPicsBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
 		catPicsBuilder.append(CatPicturesTable.THUMBNAIL_URL + " TEXT, ");
-		catPicsBuilder.append(CatPicturesTable.CREATED + " INTEGER");
+		catPicsBuilder.append(CatPicturesTable.CREATED + " NUMERIC");
 		catPicsBuilder.append(");");
 		String sql = catPicsBuilder.toString();
 		Log.i(TAG, "Creating DB table with string: '" + sql + "'");
@@ -62,7 +62,7 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 		commentsBuilder.append(CommentsTable.CAT_PICTURE_ID + " TEXT, ");
 		commentsBuilder.append(CommentsTable.COMMENT_TEXT + " TEXT, ");
 		commentsBuilder.append(CatPicturesTable.AUTHOR + " TEXT, ");
-		commentsBuilder.append(CatPicturesTable.CREATED + " INTEGER");
+		commentsBuilder.append(CatPicturesTable.CREATED + " NUMERIC");
 		commentsBuilder.append(");");
 		sql = commentsBuilder.toString();
 		Log.i(TAG, "Creating DB table with string: '" + sql + "'");

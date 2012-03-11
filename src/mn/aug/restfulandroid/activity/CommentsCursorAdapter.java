@@ -1,6 +1,8 @@
 package mn.aug.restfulandroid.activity;
 
 
+import java.util.Date;
+
 import mn.aug.restfulandroid.R;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.RESOURCE_TRANSACTION_FLAG;
@@ -24,11 +26,14 @@ public class CommentsCursorAdapter extends CursorAdapter {
 
 		String comment = cursor.getString(cursor.getColumnIndexOrThrow(CommentsTable.COMMENT_TEXT));
 		String author = cursor.getString(cursor.getColumnIndexOrThrow(CommentsTable.AUTHOR));
+		Long commentDate = cursor.getLong(cursor.getColumnIndexOrThrow(CommentsTable.CREATED));
 		int transactionStatus = cursor.getInt(cursor.getColumnIndexOrThrow(CommentsTable._STATUS));
 		
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.commentView.setText(comment);	
 		holder.authorView.setText(author);	
+		
+		
 		
 		if((transactionStatus & RESOURCE_TRANSACTION_FLAG.IN_PROGRESS) == RESOURCE_TRANSACTION_FLAG.IN_PROGRESS){
 			holder.postingView.setVisibility(View.VISIBLE);
@@ -36,6 +41,12 @@ public class CommentsCursorAdapter extends CursorAdapter {
 		} else {
 			holder.postingView.setVisibility(View.GONE);
 			holder.progress.setVisibility(View.GONE);
+			
+			//show comment date
+			if(commentDate != null){				
+				CharSequence dateStr = android.text.format.DateFormat.format("MM/dd/yyyy", new Date(commentDate));
+				holder.dateView.setText(dateStr);
+			}
 		}
 		
 

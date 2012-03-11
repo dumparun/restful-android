@@ -6,6 +6,7 @@ import mn.aug.restfulandroid.util.JSONUtil;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 public class CatPicture implements Resource {
 
@@ -24,14 +25,13 @@ public class CatPicture implements Resource {
 	 *             - if the JSON does not contain the required keys
 	 */
 	public CatPicture(JSONObject json) {
-
 		this.id = JSONUtil.getString(json, "id");
 		this.title = JSONUtil.getString(json, "title");
 		this.url = JSONUtil.getString(json, "url");
 		this.author = JSONUtil.getString(json, "author");
 		this.thumbnailUrl = JSONUtil.getString(json, "thumbnail");
-        this.created = JSONUtil.getLong(json, "created");
-	}
+        this.created = JSONUtil.getLong(json, "created") * 1000; // reddit api uses date value in seconds
+    }
 
 	public String getId() {
 		return id;
