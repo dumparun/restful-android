@@ -1,6 +1,7 @@
 package mn.aug.restfulandroid.service;
 
-import mn.aug.restfulandroid.rest.RestMethodFactory.Method;
+import mn.aug.restfulandroid.processor.ResourceProcessorCallback;
+import mn.aug.restfulandroid.rest.method.RestMethodFactory.Method;
 
 public interface CatPicturesService {
 

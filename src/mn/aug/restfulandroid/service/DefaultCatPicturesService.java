@@ -1,5 +1,8 @@
 package mn.aug.restfulandroid.service;
 
+import mn.aug.restfulandroid.processor.CatPicturesProcessorFactory;
+import mn.aug.restfulandroid.processor.ResourceProcessor;
+import mn.aug.restfulandroid.processor.ResourceProcessorCallback;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;

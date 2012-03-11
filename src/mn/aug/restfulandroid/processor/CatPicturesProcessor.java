@@ -1,11 +1,11 @@
-package mn.aug.restfulandroid.service;
+package mn.aug.restfulandroid.processor;
 
 import java.util.List;
 
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
-import mn.aug.restfulandroid.rest.RestMethod;
-import mn.aug.restfulandroid.rest.RestMethodResult;
 import mn.aug.restfulandroid.rest.method.GetCatPicturesRestMethod;
+import mn.aug.restfulandroid.rest.method.RestMethod;
+import mn.aug.restfulandroid.rest.method.RestMethodResult;
 import mn.aug.restfulandroid.rest.resource.CatPicture;
 import mn.aug.restfulandroid.rest.resource.CatPictures;
 import android.content.ContentResolver;

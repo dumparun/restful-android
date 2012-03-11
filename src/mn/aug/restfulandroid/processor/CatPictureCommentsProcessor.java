@@ -1,14 +1,14 @@
-package mn.aug.restfulandroid.service;
+package mn.aug.restfulandroid.processor;
 
 import java.util.List;
 
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.RESOURCE_TRANSACTION_FLAG;
-import mn.aug.restfulandroid.rest.RestMethod;
-import mn.aug.restfulandroid.rest.RestMethodResult;
 import mn.aug.restfulandroid.rest.method.GetCommentsRestMethod;
 import mn.aug.restfulandroid.rest.method.PostCommentRestMethod;
+import mn.aug.restfulandroid.rest.method.RestMethod;
+import mn.aug.restfulandroid.rest.method.RestMethodResult;
 import mn.aug.restfulandroid.rest.resource.CatPictures;
 import mn.aug.restfulandroid.rest.resource.Comment;
 import mn.aug.restfulandroid.rest.resource.Comments;
@@ -53,7 +53,7 @@ public class CatPictureCommentsProcessor implements ResourceProcessor {
 		 * the content provider
 		 */
 
-		addNewComments(result);
+		addNewComments(result,mCatPictureId);
 
 		// (3) Operation complete callback to Service
 
@@ -93,7 +93,7 @@ public class CatPictureCommentsProcessor implements ResourceProcessor {
 		callback.send(result.getStatusCode(), commentUri.getLastPathSegment());
 	}
 
-	private void addNewComments(RestMethodResult<Comments> result) {
+	private void addNewComments(RestMethodResult<Comments> result, String catPictureId) {
 
 		if(result.getStatusCode() == 200){
 			Comments catPictureComments = result.getResource();
@@ -105,6 +105,7 @@ public class CatPictureCommentsProcessor implements ResourceProcessor {
 				ContentValues values = comment.toContentValues();
 				values.put(CommentsTable._STATUS, RESOURCE_TRANSACTION_FLAG.COMPLETE);
 				values.put(CommentsTable._RESULT, result.getStatusCode());
+				values.put(CommentsTable.CAT_PICTURE_ID, catPictureId);
 				cr.insert(Comments.CONTENT_URI, values);
 			}
 		}

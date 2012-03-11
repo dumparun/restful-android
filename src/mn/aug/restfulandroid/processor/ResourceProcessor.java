@@ -1,4 +1,4 @@
-package mn.aug.restfulandroid.service;
+package mn.aug.restfulandroid.processor;
 import android.os.Bundle;
 
 public interface ResourceProcessor {

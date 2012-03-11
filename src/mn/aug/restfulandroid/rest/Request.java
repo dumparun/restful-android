@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mn.aug.restfulandroid.rest.RestMethodFactory.Method;
+import mn.aug.restfulandroid.rest.method.RestMethodFactory.Method;
 
 
 public class Request {

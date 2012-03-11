@@ -3,10 +3,7 @@ package mn.aug.restfulandroid.rest.method;
 import java.net.URI;
 
 import android.content.Context;
-import mn.aug.restfulandroid.rest.AbstractRestMethod;
 import mn.aug.restfulandroid.rest.Request;
-import mn.aug.restfulandroid.rest.RestMethod;
-import mn.aug.restfulandroid.rest.RestMethodResult;
 import mn.aug.restfulandroid.rest.resource.Comment;
 import mn.aug.restfulandroid.rest.resource.Comments;
 

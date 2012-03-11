@@ -1,4 +1,4 @@
-package mn.aug.restfulandroid.rest;
+package mn.aug.restfulandroid.rest.method;
 
 import mn.aug.restfulandroid.rest.resource.Resource;
 

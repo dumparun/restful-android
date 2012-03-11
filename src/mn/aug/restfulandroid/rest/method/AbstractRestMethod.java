@@ -1,9 +1,13 @@
-package mn.aug.restfulandroid.rest;
+package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import mn.aug.restfulandroid.rest.DefaultRestClient;
+import mn.aug.restfulandroid.rest.Request;
+import mn.aug.restfulandroid.rest.Response;
+import mn.aug.restfulandroid.rest.RestClient;
 import mn.aug.restfulandroid.rest.resource.Resource;
 import mn.aug.restfulandroid.security.AuthorizationManager;
 import mn.aug.restfulandroid.security.RequestSigner;

@@ -2,9 +2,8 @@ package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
 
-import mn.aug.restfulandroid.rest.AbstractRestMethod;
 import mn.aug.restfulandroid.rest.Request;
-import mn.aug.restfulandroid.rest.RestMethodFactory.Method;
+import mn.aug.restfulandroid.rest.method.RestMethodFactory.Method;
 import mn.aug.restfulandroid.rest.resource.CatPictures;
 
 import org.json.JSONArray;

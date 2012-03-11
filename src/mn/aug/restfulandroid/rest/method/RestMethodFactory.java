@@ -1,4 +1,4 @@
-package mn.aug.restfulandroid.rest;
+package mn.aug.restfulandroid.rest.method;
 
 import java.util.List;
 import java.util.Map;

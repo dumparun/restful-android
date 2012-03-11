@@ -28,6 +28,7 @@ public class Comment implements Resource {
 		this.id = JSONUtil.getString(json, "id");
 		this.author = JSONUtil.getString(json, "author");
 		this.text = JSONUtil.getString(json, "body");
+		this.createDate = JSONUtil.getLong(json, "created") * 1000; // reddit api uses date value in seconds;
 	}
 	
 	/**
