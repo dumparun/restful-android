@@ -7,5 +7,6 @@
     <string name="error_occurred">An error has occurred.</string>
     <string name="comment_hint">Post a new comment</string>
     <string name="button_comment">Post</string>
+    <string name="posting">posting...</string>
 
 </resources>

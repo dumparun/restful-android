@@ -22,5 +22,35 @@
         android:layout_alignParentBottom="true"
         android:textSize="11dip"
         android:paddingTop="5dp"/>
+    
+    <TextView
+        android:id="@+id/comment_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/author"
+        android:layout_below="@id/comment_text"
+        android:layout_alignParentBottom="true"
+        android:textSize="11dip"
+        android:paddingTop="5dp"/>
+    
+
+     <ProgressBar
+         android:id="@+id/progressBar"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_centerVertical="true"
+         android:layout_marginRight="16dp" />
+     
+     <TextView
+        android:id="@+id/posting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/posting"
+        android:textSize="11dip"
+        android:paddingTop="5dp"/>
 
 </RelativeLayout>

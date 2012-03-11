@@ -29,30 +29,20 @@ public class DefaultCatPicturesService extends IntentService implements CatPictu
 		Bundle parameters = requestIntent.getBundleExtra(CatPicturesService.EXTRA_REQUEST_PARAMETERS);
 		ResourceProcessor processor = CatPicturesProcessorFactory.getInstance(this).getProcessor(resourceType);
 
-		switch (resourceType) {
-		case RESOURCE_TYPE_CAT_PICTURES:
-
-			if (method.equalsIgnoreCase(METHOD_GET)) {
-				processor.getResource(makeCatPicturesProcessorCallback(), parameters);
-			} else {
+		if (processor == null){
+			if(mCallback != null){
 				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
 			}
-			break;
-			
-		case RESOURCE_TYPE_COMMENTS:
+			return;
+		} 
 
-			if (method.equalsIgnoreCase(METHOD_GET)) {
-				processor.getResource(makeCatPicturesProcessorCallback(), parameters);
-			} else if (method.equalsIgnoreCase(METHOD_POST)){
-				// TODO Add hooks to processor once its complete
-			} else {
-				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
-			}
-			break;
 
-		default:
+		if (method.equalsIgnoreCase(METHOD_GET)) {
+			processor.getResource(makeCatPicturesProcessorCallback(), parameters);
+		} else if (method.equalsIgnoreCase(METHOD_POST)){
+			processor.postResource(makeCatPicturesProcessorCallback(), parameters);
+		} else if(mCallback != null) {
 			mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
-			break;
 		}
 
 	}

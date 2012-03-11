@@ -46,8 +46,11 @@ public class CommentActivity extends Activity {
 
 	private RestfulAndroid app;
 	
+	/**
+	 * local database key
+	 */
 	private String catPictureId;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,7 +99,10 @@ public class CommentActivity extends Activity {
 
 			titleView.setText(title);
 			thumbView.setImageURI(Uri.parse(thumbFile.getPath()));
+			
 		}
+		
+		cursor.close();
 	}
 
 	private void initComments(){
@@ -115,7 +121,7 @@ public class CommentActivity extends Activity {
 		// CREATE THE ADAPTER USING THE CURSOR
 		// THIS BINDS THE DATA IN THE CURSOR TO THE VIEW FOR EACH ROW IN THE LIST
 
-		CatPicsCursorAdapter mAdapter = new CatPicsCursorAdapter(this, cursor);
+		CommentsCursorAdapter mAdapter = new CommentsCursorAdapter(this, cursor);
 
 		// SET THIS ADAPTER AS YOUR LISTACTIVITY'S ADAPTER
 		ListView listView = (ListView)findViewById(R.id.comments_list);
@@ -165,9 +171,10 @@ public class CommentActivity extends Activity {
 	}
 	
 	private void postComment(){
-		EditText commentToPost = (EditText) findViewById(R.id.new_comment_entry);
-		Editable comment = commentToPost.getText();
+		EditText commentField = (EditText) findViewById(R.id.new_comment_entry);
+		Editable comment = commentField.getText();
 		mCatPicturesServiceHelper.submitNewComment(this.catPictureId, comment.toString());
+		commentField.setText(null);
 	}
 
 	class CatPicturesReceiver extends BroadcastReceiver {

@@ -53,9 +53,11 @@ public final class CatPicturesProviderContract {
 
 			DISPLAY_COLUMNS = new String[] {
 					CatPicturesTable._ID,
+					CatPicturesTable._STATUS,
 					CatPicturesTable.THUMBNAIL_URL,
 					CatPicturesTable.TITLE,
-					CatPicturesTable.AUTHOR
+					CatPicturesTable.AUTHOR,
+					CatPicturesTable.CREATED
 				};
 		}
 
@@ -166,8 +168,10 @@ public final class CatPicturesProviderContract {
 
 				DISPLAY_COLUMNS = new String[] {
 						CommentsTable._ID,
+						CommentsTable._STATUS,
 						CommentsTable.COMMENT_TEXT,
-						CommentsTable.AUTHOR
+						CommentsTable.AUTHOR,
+						CommentsTable.CREATED
 					};
 			}
 
@@ -215,6 +219,33 @@ public final class CatPicturesProviderContract {
 			// Prevent instantiation of this class
 			private CommentsTable() {
 			}
+		}
+		
+		public class RESOURCE_TRANSACTION_FLAG {
+			/**
+			 * The most recent transaction on this resource is a POST
+			 */
+		    public static final int POST = 1 << 0;
+		    /**
+			 * The most recent transaction on this resource is a PUT
+			 */
+		    public static final int PUT = 1 << 1;
+		    /**
+			 * The most recent transaction on this resource is a DELETE
+			 */
+		    public static final int DELETE = 1 << 2;
+		    /**
+			 * The most recent transaction on this resource is a GET
+			 */
+		    public static final int GET = 1 << 3;
+		    /**
+			 * The most recent transaction on this resource is still in progress
+			 */
+		    public static final int IN_PROGRESS = 1 << 4;
+		    /**
+			 * The most recent transaction on this resource is finished
+			 */
+		    public static final int COMPLETE = 1 << 5;
 		}
 
 	private CatPicturesProviderContract() {

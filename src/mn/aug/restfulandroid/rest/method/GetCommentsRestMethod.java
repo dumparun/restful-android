@@ -12,9 +12,9 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
-public class GetCatPictureCommentsRestMethod extends AbstractRestMethod<Comments> {
+public class GetCommentsRestMethod extends AbstractRestMethod<Comments> {
 
-	private static final String TAG = GetCatPictureCommentsRestMethod.class.getSimpleName();
+	private static final String TAG = GetCommentsRestMethod.class.getSimpleName();
 
 	private Context mContext;
 
@@ -25,7 +25,7 @@ public class GetCatPictureCommentsRestMethod extends AbstractRestMethod<Comments
 
 	private URI mUri;
 
-	public GetCatPictureCommentsRestMethod(Context context, String storyId) {
+	public GetCommentsRestMethod(Context context, String storyId) {
 		mContext = context.getApplicationContext();
 		mStoryId = storyId;
 		mUri = buildUri();

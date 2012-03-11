@@ -39,7 +39,7 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 		StringBuilder catPicsBuilder = new StringBuilder();
 		catPicsBuilder.append("CREATE TABLE " + CatPicturesTable.TABLE_NAME + " (");
 		catPicsBuilder.append(CatPicturesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-		catPicsBuilder.append(CatPicturesTable._STATUS + " TEXT, ");
+		catPicsBuilder.append(CatPicturesTable._STATUS + " INTEGER, ");
 		catPicsBuilder.append(CatPicturesTable._RESULT + " INTEGER, ");
 		catPicsBuilder.append(CatPicturesTable.REF_ID + " TEXT, ");
 		catPicsBuilder.append(CatPicturesTable.TITLE + " TEXT, ");
@@ -56,7 +56,7 @@ public class ProviderDbHelper extends SQLiteOpenHelper {
 		StringBuilder commentsBuilder = new StringBuilder();
 		commentsBuilder.append("CREATE TABLE " + CommentsTable.TABLE_NAME + " (");
 		commentsBuilder.append(CommentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-		commentsBuilder.append(CommentsTable._STATUS + " TEXT, ");
+		commentsBuilder.append(CommentsTable._STATUS + " INTEGER, ");
 		commentsBuilder.append(CommentsTable._RESULT + " INTEGER, ");
 		commentsBuilder.append(CommentsTable.REF_ID + " TEXT, ");
 		commentsBuilder.append(CommentsTable.CAT_PICTURE_ID + " TEXT, ");
