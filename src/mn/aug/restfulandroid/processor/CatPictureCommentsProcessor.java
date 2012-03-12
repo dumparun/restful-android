@@ -99,14 +99,17 @@ public class CatPictureCommentsProcessor implements ResourceProcessor {
 			Comments catPictureComments = result.getResource();
 			List<Comment> comments = catPictureComments.getComments();
 			ContentResolver cr = this.mContext.getContentResolver();
+			long existingCommentTimestamp = getMostRecentCommentTimestamp(catPictureId);
 
 			// insert/update row for each cat picture in the list
 			for (Comment comment : comments) {
-				ContentValues values = comment.toContentValues();
-				values.put(CommentsTable._STATUS, RESOURCE_TRANSACTION_FLAG.COMPLETE);
-				values.put(CommentsTable._RESULT, result.getStatusCode());
-				values.put(CommentsTable.CAT_PICTURE_ID, catPictureId);
-				cr.insert(Comments.CONTENT_URI, values);
+				if(comment.getCreationDate() > existingCommentTimestamp){
+					ContentValues values = comment.toContentValues();
+					values.put(CommentsTable._STATUS, RESOURCE_TRANSACTION_FLAG.COMPLETE);
+					values.put(CommentsTable._RESULT, result.getStatusCode());
+					values.put(CommentsTable.CAT_PICTURE_ID, catPictureId);
+					cr.insert(Comments.CONTENT_URI, values);
+				}
 			}
 		}
 	}
@@ -156,5 +159,20 @@ public class CatPictureCommentsProcessor implements ResourceProcessor {
 
 		return null;
 	}
+
+	private long getMostRecentCommentTimestamp(String mCatPictureId) {
+		ContentResolver contentResolver = mContext.getContentResolver();
+		String whereClause = CommentsTable.CAT_PICTURE_ID + "=?";
+		String[] whereValues = {mCatPictureId};
+		Cursor cursor = contentResolver.query(Comments.CONTENT_URI,
+				new String[] { CatPicturesTable.CREATED }, whereClause, whereValues, CatPicturesTable.CREATED
+				+ " DESC LIMIT 1");
+		if (cursor.moveToNext()) {
+			return cursor.getLong(0);
+		} else {
+			return 0L;
+		}
+	}
+
 
 }
