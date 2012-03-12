@@ -1,6 +1,7 @@
 package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,27 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 	}
 	
 	protected abstract URI getURI();
+	
+	protected String buildQueryString(Map<String, String> params) {
+		
+		StringBuilder queryStringBuilder = new StringBuilder();
+		
+		Iterator<String> paramKeyIter = params.keySet().iterator();
+		
+		if (paramKeyIter.hasNext()) {
+			queryStringBuilder.append(getKeyValuePair(params, paramKeyIter.next()));
+		}
+		
+		while (paramKeyIter.hasNext()) {
+			queryStringBuilder.append("&" + getKeyValuePair(params, paramKeyIter.next()));
+		}
+		
+		return queryStringBuilder.toString();
+	}
+
+	private String getKeyValuePair(Map<String, String> params, String key) {
+		return key + "=" + params.get(key);
+	}
 
 	/**
 	 * Returns the log tag for the class extending AbstractRestMethod
@@ -90,7 +112,7 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 
 	protected abstract T parseResponseBody(String responseBody) throws Exception;
 
-	private Response doRequest(Request request) {
+	protected Response doRequest(Request request) {
 
 		if (mRestClient == null) {
 			mRestClient = new DefaultRestClient();

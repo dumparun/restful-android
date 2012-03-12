@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
@@ -19,6 +21,10 @@ import android.widget.ListView;
 public class CatPicturesActivity extends ListActivity {
 
 	private static final String TAG = CatPicturesActivity.class.getSimpleName();
+
+	private static final int LOGIN_MENU_OPTION_ID = 1;
+
+	private static final int LOGIN_REQUEST_CODE = 10;
 
 	private Long requestId;
 	/**
@@ -145,7 +151,6 @@ public class CatPicturesActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
 		super.onListItemClick(l, v, position, id);
 		Cursor cursor = (Cursor)getListAdapter().getItem(position);
 		String catPicId = cursor.getString(cursor.getColumnIndex(CatPicturesTable._ID));
@@ -153,6 +158,29 @@ public class CatPicturesActivity extends ListActivity {
 		comments.putExtra(CommentActivity.EXTRA_CAT_PICTURE_ID, catPicId);
 		startActivity(comments);
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(Menu.NONE, LOGIN_MENU_OPTION_ID, Menu.NONE, getString(R.string.login_menu_option_title));
+		return true;
+	}
+
+	/**
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case LOGIN_MENU_OPTION_ID:
+			Intent login = new Intent(this, LoginActivity.class);
+			startActivityForResult(login, LOGIN_REQUEST_CODE);
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	
 	
 	
 
