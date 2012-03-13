@@ -1,12 +1,15 @@
 package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import mn.aug.restfulandroid.rest.Request;
 import mn.aug.restfulandroid.rest.method.RestMethodFactory.Method;
 import mn.aug.restfulandroid.rest.resource.Comment;
+import mn.aug.restfulandroid.security.LoginManager;
+import mn.aug.restfulandroid.util.JSONUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,12 +34,15 @@ public class PostCommentRestMethod extends AbstractRestMethod<Comment> {
 	private Comment mComment;
 
 	private String mParent;
+	
+	private LoginManager loginMgr;
 
 	public PostCommentRestMethod(Context context, String catPictureRefId, Comment comment) {
 		mContext = context.getApplicationContext();
 		mParent = "t3_" + catPictureRefId;
 		mComment = comment;
 		mUri = buildUri();
+		loginMgr = new LoginManager(context);
 	}
 
 	@Override
@@ -69,7 +75,18 @@ public class PostCommentRestMethod extends AbstractRestMethod<Comment> {
 			
 			throw new Exception((String) error.get(0));
 		}
-
+		
+		// TODO Get updated values from API
+		/*
+		 * Reddit returns web garbage in response to post, probably need to find better api,
+		 * we should be able to parse an id, author and creation timestamp from the response.
+		 * Just hard-code for now.
+		 */
+		JSONObject commentData = ((JSONObject)(json.getJSONObject("data").getJSONArray("things").get(0))).getJSONObject("data");
+		mComment.setId(JSONUtil.getString(commentData,"id"));
+		mComment.setCreateDate(new Date().getTime());
+		mComment.setAuthor(loginMgr.getLogin().getUsername());
+		
 		return mComment;
 	}
 

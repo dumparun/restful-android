@@ -276,7 +276,7 @@ public class CatPicturesProvider extends ContentProvider {
 	public int update(Uri uri, ContentValues updateValues, String whereClause, String[] whereValues) {
 		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
 		int updatedRowsCount;
-		String finalWhere;
+		String finalWhere=null;
 		String tableName=null;
 
 		db.beginTransaction();
@@ -324,7 +324,7 @@ public class CatPicturesProvider extends ContentProvider {
 			}
 
 			updatedRowsCount = db.update(tableName, updateValues,
-					whereClause, whereValues);
+					finalWhere, whereValues);
 			
 			if (updatedRowsCount > 0) {
 				db.setTransactionSuccessful();

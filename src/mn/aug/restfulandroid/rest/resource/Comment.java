@@ -62,6 +62,18 @@ public class Comment implements Resource {
 	}
 	
 	
+	// THESE SETTERS ARE USED TO UPDATE AFTER A POST
+	public void setCreateDate(long createDate) {
+		this.createDate = createDate;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public void setAuthor(String author){
+		this.author = author;
+	}
 
 	public ContentValues toContentValues() {
 		ContentValues rowData = new ContentValues();
