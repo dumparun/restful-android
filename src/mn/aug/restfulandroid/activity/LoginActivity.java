@@ -5,12 +5,11 @@ import mn.aug.restfulandroid.rest.method.PostLoginRestMethod;
 import mn.aug.restfulandroid.rest.method.RestMethod;
 import mn.aug.restfulandroid.rest.method.RestMethodResult;
 import mn.aug.restfulandroid.rest.resource.Login;
+import mn.aug.restfulandroid.security.LoginManager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -21,8 +20,6 @@ import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
-	public static final String PREFS_KEY_COOKIE = null;
-	
 	private EditText usernameField;
 	private EditText passwordField;
 	protected ProgressBar mProgressSpinner;
@@ -33,7 +30,7 @@ public class LoginActivity extends Activity {
 		public void onSuccess(Login login) {
 			Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
 			mProgressSpinner.setVisibility(View.GONE);
-			save(login);
+			mLoginManager.save(login);
 			setResult(Activity.RESULT_OK);
 			finish();
 		}
@@ -44,6 +41,7 @@ public class LoginActivity extends Activity {
 			mProgressSpinner.setVisibility(View.GONE);
 		}
 	};
+	private LoginManager mLoginManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +68,15 @@ public class LoginActivity extends Activity {
 		});
 	}
 
-	protected void hideKeybaord() {
-		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mLoginManager = new LoginManager(this);
 	}
 
-	protected void save(Login login) {
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putString(PREFS_KEY_COOKIE, login.getCookie());
-		editor.commit();
+	protected void hideKeybaord() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
 	}
 
 	public class LoginTask extends AsyncTask<String, Void, RestMethodResult<Login>> {
@@ -102,15 +100,15 @@ public class LoginActivity extends Activity {
 		@Override
 		protected void onPostExecute(RestMethodResult<Login> result) {
 			super.onPostExecute(result);
-			
+
 			Login login = result.getResource();
-			
+
 			if (login != null && login.getCookie() != null) {
 				mListener.onSuccess(login);
 			} else {
 				mListener.onError("Login error", null);
 			}
-			
+
 		}
 
 	}

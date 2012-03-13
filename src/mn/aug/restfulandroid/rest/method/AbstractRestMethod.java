@@ -1,6 +1,8 @@
 package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +11,9 @@ import mn.aug.restfulandroid.rest.DefaultRestClient;
 import mn.aug.restfulandroid.rest.Request;
 import mn.aug.restfulandroid.rest.Response;
 import mn.aug.restfulandroid.rest.RestClient;
+import mn.aug.restfulandroid.rest.resource.Login;
 import mn.aug.restfulandroid.rest.resource.Resource;
-import mn.aug.restfulandroid.security.AuthorizationManager;
-import mn.aug.restfulandroid.security.RequestSigner;
+import mn.aug.restfulandroid.security.LoginManager;
 import mn.aug.restfulandroid.util.Logger;
 import android.content.Context;
 
@@ -24,13 +26,23 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 
 		Request request = buildRequest();
 		if (requiresAuthorization()) {
-			RequestSigner signer = AuthorizationManager.getInstance(getContext());
-			signer.authorize(request);
+			LoginManager loginManager = new LoginManager(getContext());
+			authorize(request, loginManager.getLogin());
 		}
 		Response response = doRequest(request);
 		return buildResult(response);
 	}
 	
+	private void authorize(Request request, Login login) {
+		List<String> cookie = new ArrayList<String>();
+		cookie.add("reddit_session=" + login.getCookie());
+		request.addHeader("Cookie", cookie);
+		
+		String body = new String(request.getBody());
+		body += "&uh=" + login.getModHash();
+		request.setBody(body.getBytes());
+	}
+
 	public void setRestClient(RestClient client) {
 		mRestClient = client;
 	}

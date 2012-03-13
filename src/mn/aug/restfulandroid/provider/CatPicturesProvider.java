@@ -57,7 +57,7 @@ public class CatPicturesProvider extends ContentProvider {
 
 		// Add a pattern to route URIs terminated with a cat picture ID
 		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY,
-				CommentsTable.TABLE_NAME + "/#", MATCHER_CAT_PICTURE_ID);
+				CatPicturesTable.TABLE_NAME + "/#", MATCHER_CAT_PICTURE_ID);
 
 		// Add a pattern to route URIs terminated with just "comments"
 		uriMatcher.addURI(CatPicturesProviderContract.AUTHORITY, CommentsTable.TABLE_NAME,
@@ -132,6 +132,8 @@ public class CatPicturesProvider extends ContentProvider {
 				// if we were passed a 'where' arg, add that to our 'finalWhere'
 				if (whereClause != null) {
 					finalWhere = finalWhere + " AND " + whereClause;
+				} else {
+					whereClause = finalWhere;
 				}
 				break;
 
@@ -141,12 +143,16 @@ public class CatPicturesProvider extends ContentProvider {
 			}
 
 			deletedRowsCount = db.delete(tableName, whereClause, whereValues);
+			
+			if (deletedRowsCount > 0) {
+				db.setTransactionSuccessful();
+				// Notify observers of the the change
+				getContext().getContentResolver().notifyChange(uri, null);
+			}
+			
 		} finally {
 			db.endTransaction();
 		}
-
-		// Notify observers of the the change
-		getContext().getContentResolver().notifyChange(uri, null);
 
 		// Returns the number of rows deleted.
 		return deletedRowsCount;
@@ -319,19 +325,24 @@ public class CatPicturesProvider extends ContentProvider {
 
 			updatedRowsCount = db.update(tableName, updateValues,
 					whereClause, whereValues);
+			
+			if (updatedRowsCount > 0) {
+				db.setTransactionSuccessful();
+				
+				/*
+				 * Gets a handle to the content resolver object for the current context,
+				 * and notifies it that the incoming URI changed. The object passes this
+				 * along to the resolver framework, and observers that have registered
+				 * themselves for the provider are notified.
+				 */
+				getContext().getContentResolver().notifyChange(uri, null);
+			}
+			
 		} finally {
 			db.endTransaction();
 		}
 
-		/*
-		 * Gets a handle to the content resolver object for the current context,
-		 * and notifies it that the incoming URI changed. The object passes this
-		 * along to the resolver framework, and observers that have registered
-		 * themselves for the provider are notified.
-		 */
-		if (updatedRowsCount > 0) {
-			getContext().getContentResolver().notifyChange(uri, null);
-		}
+
 
 		// Returns the number of rows updated.
 		return updatedRowsCount;

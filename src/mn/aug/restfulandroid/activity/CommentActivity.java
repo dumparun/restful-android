@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CommentActivity extends Activity {
 
@@ -50,7 +51,9 @@ public class CommentActivity extends Activity {
 	 * local database key
 	 */
 	private String catPictureId;
-	
+
+	private long mPostCommentRequestId;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -196,17 +199,36 @@ public class CommentActivity extends Activity {
 				Logger.debug(TAG, "Result is for our request ID");
 
 				// What was the result of our request?
-				int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE,
-						0);
+				int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE, 0);
 
 				Logger.debug(TAG, "Result code = " + resultCode);
 
-				// HERE WE COULD GIVE SOME FEEDBACK TO USER INDICATING IF DATA HAS BEEN UPDATED
+				// HERE WE COULD GIVE SOME FEEDBACK TO USER INDICATING IF DATA
+				// HAS BEEN UPDATED
 				// OR IF AN ERROR HAS OCCURED
 				if (resultCode == 200) {
 					Logger.info(TAG, "Request Succeeded");
 				} else {
-					Logger.warn(TAG, "Error executing request:" + resultCode);					
+					Logger.warn(TAG, "Error executing request:" + resultCode);
+				}
+			} else if (resultRequestId == mPostCommentRequestId) {
+				Logger.debug(TAG, "Result is for our post comment request ID");
+				
+				// This was our post comment request, stop the progress spinner
+
+				// What was the result of our request?
+				int resultCode = intent.getIntExtra(CatPicturesServiceHelper.EXTRA_RESULT_CODE, 0);
+
+				Logger.debug(TAG, "Result code = " + resultCode);
+
+				// HERE WE COULD GIVE SOME FEEDBACK TO USER INDICATING IF DATA
+				// HAS BEEN UPDATED
+				// OR IF AN ERROR HAS OCCURED
+				if (resultCode == 200) {
+					Logger.info(TAG, "Request Succeeded");
+				} else {
+					Logger.warn(TAG, "Error executing request:" + resultCode);
+					Toast.makeText(CommentActivity.this, "Error posting comment", Toast.LENGTH_LONG).show();
 				}
 			} else {
 				// IGNORE, wasn't for our request

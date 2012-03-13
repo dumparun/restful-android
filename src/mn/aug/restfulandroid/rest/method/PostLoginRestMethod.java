@@ -60,8 +60,10 @@ public class PostLoginRestMethod extends AbstractRestMethod<Login> {
 		JSONObject json = body.getJSONObject("json");
 		JSONObject data = json.getJSONObject("data");
 		String cookie = data.getString("cookie");
+		String modhash = data.getString("modhash");
 
 		mLogin.setCookie(cookie);
+		mLogin.setModhash(modhash);
 
 		return mLogin;
 	}

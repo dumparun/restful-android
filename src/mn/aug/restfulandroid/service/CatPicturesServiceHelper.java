@@ -1,17 +1,14 @@
 package mn.aug.restfulandroid.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
-
+import mn.aug.restfulandroid.rest.resource.Login;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.ResultReceiver;
 
 /**
