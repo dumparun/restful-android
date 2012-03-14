@@ -2,7 +2,6 @@ package mn.aug.restfulandroid.rest.method;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +31,19 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		Response response = doRequest(request);
 		return buildResult(response);
 	}
-	
+
 	private void authorize(Request request, Login login) {
-		List<String> cookie = new ArrayList<String>();
-		cookie.add("reddit_session=" + login.getCookie());
-		request.addHeader("Cookie", cookie);
-		
-		String body = new String(request.getBody());
-		body += "&uh=" + login.getModHash();
-		request.setBody(body.getBytes());
+
+		if (request != null && login != null) {
+
+			List<String> cookie = new ArrayList<String>();
+			cookie.add("reddit_session=" + login.getCookie());
+			request.addHeader("Cookie", cookie);
+
+			String body = new String(request.getBody());
+			body += "&uh=" + login.getModHash();
+			request.setBody(body.getBytes());
+		}
 	}
 
 	public void setRestClient(RestClient client) {
@@ -74,23 +77,23 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		}
 		return new RestMethodResult<T>(status, statusMsg, resource);
 	}
-	
+
 	protected abstract URI getURI();
-	
+
 	protected String buildQueryString(Map<String, String> params) {
-		
+
 		StringBuilder queryStringBuilder = new StringBuilder();
-		
+
 		Iterator<String> paramKeyIter = params.keySet().iterator();
-		
+
 		if (paramKeyIter.hasNext()) {
 			queryStringBuilder.append(getKeyValuePair(params, paramKeyIter.next()));
 		}
-		
+
 		while (paramKeyIter.hasNext()) {
 			queryStringBuilder.append("&" + getKeyValuePair(params, paramKeyIter.next()));
 		}
-		
+
 		return queryStringBuilder.toString();
 	}
 
@@ -129,7 +132,7 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 		if (mRestClient == null) {
 			mRestClient = new DefaultRestClient();
 		}
-		
+
 		logRequest(request);
 		return mRestClient.execute(request);
 	}

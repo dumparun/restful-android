@@ -18,6 +18,11 @@ public class Login implements Resource {
 	}
 
 	public Login(String username, String cookie, String modhash) {
+		
+		if (username == null || cookie == null || modhash == null) {
+			throw new IllegalArgumentException("null argument");
+		}
+		
 		mUsername = username;
 		mCookie = cookie;
 		mModhash = modhash;
