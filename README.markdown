@@ -1,11 +1,11 @@
 # Contents
 
 * [Overview](#overview)
-  * [The problem](#theproblem)
-  * [The solution](#thesolution)
-  * [More information](#moreinformation)
+* [Architecture](#architecture)
+* [More information](#moreinformation)
 * [How to contribute](#howtocontribute)
 * [Branches](#branches)
+* [Contact Us](#contactus)
 * [Third-party software](#thirdpartysoftware)
 
 <a name="overview"></a>
@@ -13,15 +13,25 @@
 
 RESTful Android is an implementation of the RESTful Android app architecture as described in [Developing Android REST client applications](http://www.google.com/events/io/2010/sessions/developing-RESTful-android-apps.html), a talk by [Virgil Dobjanschi](https://plus.google.com/101870761930221849874) at Google I/O 2010.
 
-<a name="theproblem"></a>
-## The problem
+<a name="architecture"></a>
+# Architecture
 
-[TODO]
+![Service API Diagram](docs/service-api-diagram.png "Service API Pattern")
 
-<a name="thesolution"></a>
-## The solution
+### Activity
+Displays the current state of a resource, or set of resources, by observing the Content Provider that holds the resource, typically via a CursorAdapter.  CRUD requests for a resource are executed asynchronously using the ServiceHelper.  The activity can listen for the result of the requests, which are broadcast by the ServiceHelper, and display any indicators on the UI.  Any update of the actual resource is retrieved via the ContentProvider.
 
-[TODO]
+### ServiceHelper
+Exposes an asynchronous API for the front-end application that provides access to resources. Translates a resource request from the UI layer into service invocation.  Immediately returns a unique request id to a caller, and later broadcasts the result of the request, once completed by the service layer.  Maintains the state of all pending requests.
+
+### Service
+Stateless process that accepts resource requests from the application layer, and invokes the correct processor for that resource in a background thread. Returns the result of the request along with original intent in an asynchronous callback.
+
+### Processor
+Maintain the state of a resource and any transactions for that resource using a Content Provider.  Knows how to execute rest operations for a resource. Returns the result of the transaction.
+
+### Rest Method
+Understands the semantics of the remote api needed for the resource and handles the actual http requests. Rest Methods are blocking and return the result of the request and optionally a raw representation of the resource.
 
 <a name="moreinformation"></a>
 ## More information
@@ -50,7 +60,9 @@ A future edition of Programming Android may address the other two approaches, as
 <a name="howtocontribute"></a>
 # How to contribute
 
-[TODO]
+1. Fork the repo
+2. Do cool stuff in your repo
+3. Issue a [pull request](http://help.github.com/send-pull-requests/) to get your changes into the base project
 
 <a name="branches"></a>
 # Branches
@@ -69,6 +81,13 @@ The master branch is the main development branch and uses the Twitter API for co
 The catpictures branch is a simple, no-fluff version for use with the __Developing an Android RESTful Client App__ presentation at [Mobile March](http://mobilemarchtc.com) and [Gluecon](http://gluecon.com).  This one uses the [catpictures subreddit](http://reddit.com/r/catpictures) for its content.
 
 This branch is currently ahead of master in terms of features and maturity.  Following the Mobile March presentation, changes will be brought back to master.
+
+<a name="contactus"></a>
+# Contact Us
+
+**Jeremy Haberman** [@jeremyhaberman](http://twitter.com/jeremyhaberman)    
+**Brad Armstrong** [@hashbrown1](http://twitter.com/hashbrown1)    
+**Peter Pascale** [@peterpascale](http://twitter.com/peterpascale)
 
 <a name="thirdpartysoftware"></a>
 # Third-party software
