@@ -16,8 +16,6 @@ RESTful Android is an implementation of the RESTful Android app architecture as 
 <a name="architecture"></a>
 # Architecture
 
-![Service API Diagram](docs/service-api-diagram.png "Service API Pattern")
-
 ### Activity
 Displays the current state of a resource, or set of resources, by observing the Content Provider that holds the resource, typically via a CursorAdapter.  CRUD requests for a resource are executed asynchronously using the ServiceHelper.  The activity can listen for the result of the requests, which are broadcast by the ServiceHelper, and display any indicators on the UI.  Any update of the actual resource is retrieved via the ContentProvider.
 
