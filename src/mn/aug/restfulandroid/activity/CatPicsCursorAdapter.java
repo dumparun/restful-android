@@ -11,19 +11,16 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.DateFormat;
 import java.util.Date;
 
 import mn.aug.restfulandroid.R;
 import mn.aug.restfulandroid.RestfulAndroid;
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CatPicturesTable;
-import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,10 +154,9 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 				loaded = true;
 
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
 
 			}finally {
 				try {
@@ -171,7 +167,6 @@ public class CatPicsCursorAdapter extends CursorAdapter {
 						os.close();
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

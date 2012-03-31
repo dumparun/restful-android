@@ -241,7 +241,7 @@ public final class CatPicturesProviderContract {
 		    /**
 			 * The most recent transaction on this resource is still in progress
 			 */
-		    public static final int IN_PROGRESS = 1 << 4;
+		    public static final int TRANSACTING = 1 << 4;
 		    /**
 			 * The most recent transaction on this resource is finished
 			 */

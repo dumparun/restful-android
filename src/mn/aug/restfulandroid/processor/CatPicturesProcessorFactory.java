@@ -1,7 +1,7 @@
 package mn.aug.restfulandroid.processor;
 
 import android.content.Context;
-import mn.aug.restfulandroid.service.CatPicturesService;
+import mn.aug.restfulandroid.service.CatPicturesServiceContract;
 
 public class CatPicturesProcessorFactory {
 
@@ -15,9 +15,9 @@ public class CatPicturesProcessorFactory {
 
 	public ResourceProcessor getProcessor(int resourceType) {
 		switch (resourceType) {
-		case CatPicturesService.RESOURCE_TYPE_CAT_PICTURES:
+		case CatPicturesServiceContract.RESOURCE_TYPE_CAT_PICTURES:
 			return new CatPicturesProcessor(mContext);
-		case CatPicturesService.RESOURCE_TYPE_COMMENTS:
+		case CatPicturesServiceContract.RESOURCE_TYPE_COMMENTS:
 			return new CatPictureCommentsProcessor(mContext);
 		}
 		return mDefaultProcessor;

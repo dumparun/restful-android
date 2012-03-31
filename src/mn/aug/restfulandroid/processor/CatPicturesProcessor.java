@@ -37,19 +37,12 @@ public class CatPicturesProcessor implements ResourceProcessor {
 		 * can handle each method on the resource that is supported. - Processor
 		 * needs a callback (which is how the request gets back to the service)
 		 * - Processor uses a RESTMethod - created through a
-		 * RESTMethodFactory.create(parameterized) or .createGetTimeline()
+		 * RESTMethodFactory.create(parameterized) 
 		 * 
-		 * First iteration had a callback that updated the content provider with
-		 * the resources. But the eventual implementation simply block for the
-		 * response and do the update.
 		 */
 
-		// (4) Insert-Update the ContentProvider with a status column and
-		// results column
-		// Look at ContentProvider example, and build a content provider
-		// that tracks the necessary data.
-
-		// (5) Call the REST method
+		
+		// (1) Call the REST method
 		// Create a RESTMethod class that knows how to assemble the URL,
 		// and performs the HTTP operation.
 
@@ -58,14 +51,14 @@ public class CatPicturesProcessor implements ResourceProcessor {
 		RestMethodResult<CatPictures> result = method.execute();
 
 		/*
-		 * (8) Insert-Update the ContentProvider status, and insert the result
+		 * (2) Insert-Update the ContentProvider status, and insert the result
 		 * on success Parsing the JSON response (on success) and inserting into
 		 * the content provider
 		 */
 
 		updateContentProvider(result);
 
-		// (9) Operation complete callback to Service
+		// (4) Operation complete callback to Service
 
 		callback.send(result.getStatusCode(), null);
 
@@ -73,7 +66,7 @@ public class CatPicturesProcessor implements ResourceProcessor {
 	
 	@Override
 	public void postResource(ResourceProcessorCallback callback, Bundle params) {
-		//TODO
+		throw new UnsupportedOperationException("Doesn't support creating new posts");
 	}
 
 	private String getNewestCatPictureId() {

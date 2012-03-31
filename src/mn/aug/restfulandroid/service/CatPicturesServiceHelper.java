@@ -30,12 +30,12 @@ public class CatPicturesServiceHelper {
 	private Context mAppContext;
 	private ServiceResultReceiver serviceCallback;
 
-	private Class<? extends CatPicturesService> mCatPicturesServiceClass;
+	private Class<? extends CatPicturesServiceContract> mCatPicturesServiceClass;
 
 	public CatPicturesServiceHelper(Context context) {
 		this.mAppContext = context.getApplicationContext();
 		this.serviceCallback = new ServiceResultReceiver();
-		this.mCatPicturesServiceClass = DefaultCatPicturesService.class;
+		this.mCatPicturesServiceClass = CatPicturesService.class;
 	}
 
 	/**
@@ -52,10 +52,10 @@ public class CatPicturesServiceHelper {
 
 
 		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
-		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_GET);
-		intent.putExtra(CatPicturesService.RESOURCE_TYPE_EXTRA,
-				CatPicturesService.RESOURCE_TYPE_CAT_PICTURES);
-		intent.putExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA, serviceCallback);
+		intent.putExtra(CatPicturesServiceContract.METHOD_EXTRA, CatPicturesServiceContract.METHOD_GET);
+		intent.putExtra(CatPicturesServiceContract.RESOURCE_TYPE_EXTRA,
+				CatPicturesServiceContract.RESOURCE_TYPE_CAT_PICTURES);
+		intent.putExtra(CatPicturesServiceContract.SERVICE_CALLBACK_EXTRA, serviceCallback);
 		intent.putExtra(EXTRA_REQUEST_ID, requestId);
 
 		this.mAppContext.startService(intent);
@@ -76,15 +76,15 @@ public class CatPicturesServiceHelper {
 		}
 
 		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
-		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_GET);
-		intent.putExtra(CatPicturesService.RESOURCE_TYPE_EXTRA,
-				CatPicturesService.RESOURCE_TYPE_COMMENTS);
-		intent.putExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA, serviceCallback);
+		intent.putExtra(CatPicturesServiceContract.METHOD_EXTRA, CatPicturesServiceContract.METHOD_GET);
+		intent.putExtra(CatPicturesServiceContract.RESOURCE_TYPE_EXTRA,
+				CatPicturesServiceContract.RESOURCE_TYPE_COMMENTS);
+		intent.putExtra(CatPicturesServiceContract.SERVICE_CALLBACK_EXTRA, serviceCallback);
 		intent.putExtra(EXTRA_REQUEST_ID, requestId);
 
 		Bundle requestParams = new Bundle();
 		requestParams.putString(CommentsTable.CAT_PICTURE_ID, catPictureId);
-		intent.putExtra(CatPicturesService.EXTRA_REQUEST_PARAMETERS, requestParams);
+		intent.putExtra(CatPicturesServiceContract.EXTRA_REQUEST_PARAMETERS, requestParams);
 
 		this.mAppContext.startService(intent);
 
@@ -103,16 +103,16 @@ public class CatPicturesServiceHelper {
 		}
 
 		Intent intent = new Intent(this.mAppContext, mCatPicturesServiceClass);
-		intent.putExtra(CatPicturesService.METHOD_EXTRA, CatPicturesService.METHOD_POST);
-		intent.putExtra(CatPicturesService.RESOURCE_TYPE_EXTRA,
-				CatPicturesService.RESOURCE_TYPE_COMMENTS);
-		intent.putExtra(CatPicturesService.SERVICE_CALLBACK_EXTRA, serviceCallback);
+		intent.putExtra(CatPicturesServiceContract.METHOD_EXTRA, CatPicturesServiceContract.METHOD_POST);
+		intent.putExtra(CatPicturesServiceContract.RESOURCE_TYPE_EXTRA,
+				CatPicturesServiceContract.RESOURCE_TYPE_COMMENTS);
+		intent.putExtra(CatPicturesServiceContract.SERVICE_CALLBACK_EXTRA, serviceCallback);
 		intent.putExtra(EXTRA_REQUEST_ID, requestId);
 
 		Bundle requestParams = new Bundle();
 		requestParams.putString(CommentsTable.CAT_PICTURE_ID, catPictureId);
 		requestParams.putString(CommentsTable.COMMENT_TEXT, comment);
-		intent.putExtra(CatPicturesService.EXTRA_REQUEST_PARAMETERS, requestParams);
+		intent.putExtra(CatPicturesServiceContract.EXTRA_REQUEST_PARAMETERS, requestParams);
 
 		this.mAppContext.startService(intent);
 
@@ -121,7 +121,7 @@ public class CatPicturesServiceHelper {
 	}
 
 
-	public void setCatPicturesServiceClass(Class<? extends CatPicturesService> service) {
+	public void setCatPicturesServiceClass(Class<? extends CatPicturesServiceContract> service) {
 		mCatPicturesServiceClass = service;
 	}
 
@@ -164,7 +164,7 @@ public class CatPicturesServiceHelper {
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData) {
 			Intent origIntent = (Intent) resultData
-					.getParcelable(CatPicturesService.ORIGINAL_INTENT_EXTRA);
+					.getParcelable(CatPicturesServiceContract.ORIGINAL_INTENT_EXTRA);
 
 			if (origIntent != null) {
 				long requestId = origIntent.getLongExtra(EXTRA_REQUEST_ID, 0);

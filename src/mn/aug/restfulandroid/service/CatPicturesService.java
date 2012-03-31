@@ -1,22 +1,72 @@
 package mn.aug.restfulandroid.service;
 
+import mn.aug.restfulandroid.processor.CatPicturesProcessorFactory;
+import mn.aug.restfulandroid.processor.ResourceProcessor;
 import mn.aug.restfulandroid.processor.ResourceProcessorCallback;
-import mn.aug.restfulandroid.rest.method.RestMethodFactory.Method;
+import android.app.IntentService;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 
-public interface CatPicturesService {
+public class CatPicturesService extends IntentService implements CatPicturesServiceContract {
 
-	public static final String METHOD_EXTRA = "mn.aug.restfulandroid.service.METHOD_EXTRA";
-	public static final String RESOURCE_TYPE_EXTRA = "mn.aug.restfulandroid.service.RESOURCE_TYPE_EXTRA";
-	public static final String SERVICE_CALLBACK_EXTRA = "mn.aug.restfulandroid.service.SERVICE_CALLBACK";
-	public static final String ORIGINAL_INTENT_EXTRA = "mn.aug.restfulandroid.service.ORIGINAL_INTENT_EXTRA";
-	public static final String EXTRA_REQUEST_PARAMETERS = "mn.aug.restfulandroid.service.REQUEST_PARAMS_EXTRA";
+	private static final int REQUEST_INVALID = -1;
 
-	public static final int RESOURCE_TYPE_CAT_PICTURES = 1;
-	public static final int RESOURCE_TYPE_COMMENTS = 2;
+	private ResultReceiver mCallback;
 
-	public static final String METHOD_GET = Method.GET.toString();
-	public static final String METHOD_POST = Method.POST.toString();
+	private Intent mOriginalRequestIntent;
 
-	ResourceProcessorCallback makeCatPicturesProcessorCallback();
+	public CatPicturesService() {
+		super("DefaultCatPicturesService");
+	}
 
+	@Override
+	protected void onHandleIntent(Intent requestIntent) {
+
+		mOriginalRequestIntent = requestIntent;
+
+		// Get request data from Intent
+		String method = requestIntent.getStringExtra(CatPicturesServiceContract.METHOD_EXTRA);
+		int resourceType = requestIntent.getIntExtra(CatPicturesServiceContract.RESOURCE_TYPE_EXTRA, -1);
+		mCallback = requestIntent.getParcelableExtra(CatPicturesServiceContract.SERVICE_CALLBACK_EXTRA);
+		Bundle parameters = requestIntent.getBundleExtra(CatPicturesServiceContract.EXTRA_REQUEST_PARAMETERS);
+		ResourceProcessor processor = CatPicturesProcessorFactory.getInstance(this).getProcessor(resourceType);
+
+		if (processor == null){
+			if(mCallback != null){
+				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
+			}
+			return;
+		} 
+
+
+		if (method.equalsIgnoreCase(METHOD_GET)) {
+			processor.getResource(makeCatPicturesProcessorCallback(), parameters);
+		} else if (method.equalsIgnoreCase(METHOD_POST)){
+			processor.postResource(makeCatPicturesProcessorCallback(), parameters);
+		} else if(mCallback != null) {
+			mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
+		}
+
+	}
+
+	@Override
+	public ResourceProcessorCallback makeCatPicturesProcessorCallback() {
+		ResourceProcessorCallback callback = new ResourceProcessorCallback() {
+
+			@Override
+			public void send(int resultCode, String resourceId) {
+				if (mCallback != null) {
+					mCallback.send(resultCode, getOriginalIntentBundle());
+				}
+			}
+		};
+		return callback;
+	}
+
+	protected Bundle getOriginalIntentBundle() {
+		Bundle originalRequest = new Bundle();
+		originalRequest.putParcelable(ORIGINAL_INTENT_EXTRA, mOriginalRequestIntent);
+		return originalRequest;
+	}
 }

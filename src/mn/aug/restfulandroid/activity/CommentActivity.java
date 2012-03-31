@@ -68,7 +68,7 @@ public class CommentActivity extends Activity {
 
 		catPictureId = getIntent().getStringExtra(EXTRA_CAT_PICTURE_ID);
 
-		this.requestReceiver = new CatPicturesReceiver();
+		this.requestReceiver = new CommentsReceiver();
 		
 		initPostFields();
 		initComments();
@@ -180,7 +180,7 @@ public class CommentActivity extends Activity {
 		commentField.setText(null);
 	}
 
-	class CatPicturesReceiver extends BroadcastReceiver {
+	class CommentsReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 

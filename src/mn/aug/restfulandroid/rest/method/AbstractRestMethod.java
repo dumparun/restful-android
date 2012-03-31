@@ -71,8 +71,9 @@ public abstract class AbstractRestMethod<T extends Resource> implements RestMeth
 			logResponse(status, responseBody);
 			resource = parseResponseBody(responseBody);
 		} catch (Exception ex) {
-			// TODO Should we set some custom status code?
-			status = 506; // spec only defines up to 505
+			// our own internal error code, not from service
+			// spec only defines up to 505
+			status = 506; 
 			statusMsg = ex.getMessage();
 		}
 		return new RestMethodResult<T>(status, statusMsg, resource);

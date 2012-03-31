@@ -35,7 +35,7 @@ public class CommentsCursorAdapter extends CursorAdapter {
 		
 		
 		
-		if((transactionStatus & RESOURCE_TRANSACTION_FLAG.IN_PROGRESS) == RESOURCE_TRANSACTION_FLAG.IN_PROGRESS){
+		if((transactionStatus & RESOURCE_TRANSACTION_FLAG.TRANSACTING) == RESOURCE_TRANSACTION_FLAG.TRANSACTING){
 			holder.postingView.setVisibility(View.VISIBLE);
 			holder.progress.setVisibility(View.VISIBLE);
 		} else {
