@@ -52,7 +52,6 @@
         android:layout_below="@id/progressBar"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:text="@string/posting"
         android:textSize="11dip"/>
 
 

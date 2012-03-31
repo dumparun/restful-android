@@ -139,9 +139,13 @@ public class CatPictureCommentsProcessor implements ResourceProcessor {
 	}
 
 	private void updateNewComment(Uri commentUri, RestMethodResult<Comment> result){
+		ContentValues values;
 		ContentResolver cr = this.mContext.getContentResolver();
-
-		ContentValues values = result.getResource().toContentValues();
+		if(result.getResource() != null){
+			values = result.getResource().toContentValues();
+		} else {
+			values = new ContentValues();
+		}
 		values.put(CommentsTable._STATUS, RESOURCE_TRANSACTION_FLAG.COMPLETE);
 		values.put(CommentsTable._RESULT, result.getStatusCode());
 		cr.update(commentUri, values, null, null);

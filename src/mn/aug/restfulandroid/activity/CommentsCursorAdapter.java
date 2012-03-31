@@ -28,28 +28,32 @@ public class CommentsCursorAdapter extends CursorAdapter {
 		String author = cursor.getString(cursor.getColumnIndexOrThrow(CommentsTable.AUTHOR));
 		Long commentDate = cursor.getLong(cursor.getColumnIndexOrThrow(CommentsTable.CREATED));
 		int transactionStatus = cursor.getInt(cursor.getColumnIndexOrThrow(CommentsTable._STATUS));
-		
+		int result = cursor.getInt(cursor.getColumnIndexOrThrow(CommentsTable._RESULT));
+
 		ViewHolder holder = (ViewHolder) view.getTag();
 		holder.commentView.setText(comment);	
 		holder.authorView.setText(author);	
-		
-		
-		
+
+
+
 		if((transactionStatus & RESOURCE_TRANSACTION_FLAG.TRANSACTING) == RESOURCE_TRANSACTION_FLAG.TRANSACTING){
+			holder.postingView.setText(context.getString(R.string.posting));
 			holder.postingView.setVisibility(View.VISIBLE);
 			holder.progress.setVisibility(View.VISIBLE);
 		} else {
-			holder.postingView.setVisibility(View.GONE);
 			holder.progress.setVisibility(View.GONE);
-			
-			//show comment date
-			if(commentDate != null){				
+
+			if(result > 299){
+				holder.postingView.setText(context.getString(R.string.failed));
+
+			} else if(commentDate > 0){				
+				holder.postingView.setVisibility(View.GONE);
+				//show comment date
 				CharSequence dateStr = android.text.format.DateFormat.format("MM/dd/yyyy", new Date(commentDate));
 				holder.dateView.setText(dateStr);
 			}
-		}
-		
 
+		}
 	}
 
 	@Override
@@ -62,7 +66,7 @@ public class CommentsCursorAdapter extends CursorAdapter {
 		holder.dateView = (TextView) listItemView.findViewById(R.id.comment_date);
 		holder.postingView = (TextView) listItemView.findViewById(R.id.posting);
 		holder.progress = (ProgressBar) listItemView.findViewById(R.id.progressBar);
-		
+
 		listItemView.setTag(holder);
 
 		return listItemView;

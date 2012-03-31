@@ -12,10 +12,6 @@ public class CatPicturesService extends IntentService implements CatPicturesServ
 
 	private static final int REQUEST_INVALID = -1;
 
-	private ResultReceiver mCallback;
-
-	private Intent mOriginalRequestIntent;
-
 	public CatPicturesService() {
 		super("DefaultCatPicturesService");
 	}

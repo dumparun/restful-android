@@ -116,8 +116,7 @@ public class CommentActivity extends Activity {
 		String[] whereValues = {this.catPictureId};
 
 		Cursor cursor = getContentResolver().query(Comments.CONTENT_URI,
-				CommentsTable.DISPLAY_COLUMNS, whereClause, whereValues,
-				CommentsTable.CREATED + " DESC");
+				CommentsTable.DISPLAY_COLUMNS, whereClause, whereValues, CommentsTable.CREATED);
 
 		startManagingCursor(cursor);
 

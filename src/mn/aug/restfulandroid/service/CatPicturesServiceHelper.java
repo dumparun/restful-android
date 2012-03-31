@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import mn.aug.restfulandroid.provider.CatPicturesProviderContract.CommentsTable;
-import mn.aug.restfulandroid.rest.resource.Login;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +13,7 @@ import android.os.ResultReceiver;
 /**
  * CatPictures API
  * 
- * @author jeremyhaberman
+ * @author Brad Armstrong
  */
 public class CatPicturesServiceHelper {
 

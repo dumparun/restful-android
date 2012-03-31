@@ -169,6 +169,7 @@ public final class CatPicturesProviderContract {
 				DISPLAY_COLUMNS = new String[] {
 						CommentsTable._ID,
 						CommentsTable._STATUS,
+						CommentsTable._RESULT,
 						CommentsTable.COMMENT_TEXT,
 						CommentsTable.AUTHOR,
 						CommentsTable.CREATED

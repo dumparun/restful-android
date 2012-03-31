@@ -11,5 +11,6 @@
     <string name="logout">Logout</string>
     <string name="logout_successful">You have been logged out.</string>
     <string name="posting">posting...</string>
+    <string name="failed">failed</string>
 
 </resources>
