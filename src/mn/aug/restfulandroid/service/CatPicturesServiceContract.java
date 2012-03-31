@@ -1,6 +1,5 @@
 package mn.aug.restfulandroid.service;
 
-import mn.aug.restfulandroid.processor.ResourceProcessorCallback;
 import mn.aug.restfulandroid.rest.method.RestMethodFactory.Method;
 
 public interface CatPicturesServiceContract {
@@ -17,6 +16,5 @@ public interface CatPicturesServiceContract {
 	public static final String METHOD_GET = Method.GET.toString();
 	public static final String METHOD_POST = Method.POST.toString();
 
-	ResourceProcessorCallback makeCatPicturesProcessorCallback();
-
+	
 }

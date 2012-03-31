@@ -23,50 +23,53 @@ public class CatPicturesService extends IntentService implements CatPicturesServ
 	@Override
 	protected void onHandleIntent(Intent requestIntent) {
 
-		mOriginalRequestIntent = requestIntent;
-
 		// Get request data from Intent
-		String method = requestIntent.getStringExtra(CatPicturesServiceContract.METHOD_EXTRA);
 		int resourceType = requestIntent.getIntExtra(CatPicturesServiceContract.RESOURCE_TYPE_EXTRA, -1);
-		mCallback = requestIntent.getParcelableExtra(CatPicturesServiceContract.SERVICE_CALLBACK_EXTRA);
+		String method = requestIntent.getStringExtra(CatPicturesServiceContract.METHOD_EXTRA);
 		Bundle parameters = requestIntent.getBundleExtra(CatPicturesServiceContract.EXTRA_REQUEST_PARAMETERS);
+		ResultReceiver serviceHelperCallback = requestIntent.getParcelableExtra(CatPicturesServiceContract.SERVICE_CALLBACK_EXTRA);
 		ResourceProcessor processor = CatPicturesProcessorFactory.getInstance(this).getProcessor(resourceType);
 
 		if (processor == null){
-			if(mCallback != null){
-				mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
+			if(serviceHelperCallback != null){
+				serviceHelperCallback.send(REQUEST_INVALID, bundleOriginalIntent(requestIntent));
 			}
 			return;
 		} 
+		
+		ResourceProcessorCallback processorCallback = makeCatPicturesProcessorCallback(requestIntent,serviceHelperCallback);
 
 
 		if (method.equalsIgnoreCase(METHOD_GET)) {
-			processor.getResource(makeCatPicturesProcessorCallback(), parameters);
+			processor.getResource(processorCallback, parameters);
 		} else if (method.equalsIgnoreCase(METHOD_POST)){
-			processor.postResource(makeCatPicturesProcessorCallback(), parameters);
-		} else if(mCallback != null) {
-			mCallback.send(REQUEST_INVALID, getOriginalIntentBundle());
+			processor.postResource(processorCallback, parameters);
+		} else if(serviceHelperCallback != null) {
+			serviceHelperCallback.send(REQUEST_INVALID, bundleOriginalIntent(requestIntent));
 		}
 
 	}
 
-	@Override
-	public ResourceProcessorCallback makeCatPicturesProcessorCallback() {
+	private ResourceProcessorCallback makeCatPicturesProcessorCallback(final Intent originalIntent, 
+			final ResultReceiver serviceReceiver) {
+
 		ResourceProcessorCallback callback = new ResourceProcessorCallback() {
 
 			@Override
 			public void send(int resultCode, String resourceId) {
-				if (mCallback != null) {
-					mCallback.send(resultCode, getOriginalIntentBundle());
+				if(serviceReceiver != null){
+				serviceReceiver.send(resultCode, bundleOriginalIntent(originalIntent));
 				}
 			}
 		};
 		return callback;
 	}
 
-	protected Bundle getOriginalIntentBundle() {
+	private Bundle bundleOriginalIntent(Intent originalIntent) {
+
 		Bundle originalRequest = new Bundle();
-		originalRequest.putParcelable(ORIGINAL_INTENT_EXTRA, mOriginalRequestIntent);
+		originalRequest.putParcelable(ORIGINAL_INTENT_EXTRA, originalIntent);
 		return originalRequest;
 	}
+
 }
