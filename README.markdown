@@ -48,9 +48,10 @@ The talk that started it all.
 By Zigurd Mednieks, Laird Dornin, G. Blake Meike, and Masumi Nakamura. Copyright 2011 O’Reilly Media, Inc., 978-1-449-38969-7
 [http://shop.oreilly.com/product/0636920010364.do](http://shop.oreilly.com/product/0636920010364.do)<br /><br />
 This book has a complete chapter (13. Exploring Content Providers) dedicated to 'Option B: Use the ContentProvider API' from Virgil's Google I/O talk:<br /><br />
-> We are not the only ones who see the benefits of this approach. At the Google I/O conference in May 2010, Virgil Dobjanschi of Google presented a talk that outlined the following three patterns for using content providers to integrate RESTful web services into Android applications...  <br />      
-> In this chapter, we’ll explore the second pattern in detail with our second Finch video example; this strategy will yield a number of important benefits for your applications. Due to the elegance with which this approach integrates network operations into Android MVC, we’ve given it the moniker “Network MVC.”<br /><br />
-A future edition of Programming Android may address the other two approaches, as well as document more details of this Google presentation. After you finish reading this chapter, we suggest that you view Google’s talk.
+
+    > We are not the only ones who see the benefits of this approach. At the Google I/O conference in May 2010, Virgil Dobjanschi of Google presented a talk that outlined the following three patterns for using content providers to integrate RESTful web services into Android applications...  <br />      
+    > In this chapter, we’ll explore the second pattern in detail with our second Finch video example; this strategy will yield a number of important benefits for your applications. Due to the elegance with which this approach integrates network operations into Android MVC, we’ve given it the moniker “Network MVC.”<br /><br />
+    > A future edition of Programming Android may address the other two approaches, as well as document more details of this Google presentation. After you finish reading this chapter, we suggest that you view Google’s talk.
 
 ### Code
 
